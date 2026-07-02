@@ -35,16 +35,17 @@ export class PlayableCard extends Phaser.GameObjects.Container
             gameObject.x = dragX;
             gameObject.y = dragY;
             console.log(this.getCenter());
-            console.log(Phaser.Math.Vector2(this.x, this.y));
+            console.log(new Phaser.Math.Vector2(this.x, this.y));
         }, this);
     }
 
     /**
-     * Returns a Vector2 with the position of the center of the card, as its orogin is in the top left corner
-     * @returns Vector2
+     * Returns a Vector2 with the position of the center of the card, as its orogin is in the top 
+     * left corner
+     * @returns Phaser.Math.Vector2
      */
     getCenter()
     {
-        return new Phaser.Math.Vector2(this.x - this.cardBaseImage.width / 2, this.y - this.cardBaseImage.height / 2);
+        return new Phaser.Math.Vector2(this.x + this.cardBaseImage.width / 2, this.y + this.cardBaseImage.height / 2);
     }
 }
