@@ -121,7 +121,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
     update(dt)
     {
         this.cardPositioning.forEach(function(value, key) {
-            if(key == null && key.isPointerDragging) return;
+            if(key == null || key.isPointerDragging) return;
 
             let x = Phaser.Math.Linear(key.getCenterPosition().x, this.getHandIndxGlobalPosition(value).x, 0.2);
             let y = Phaser.Math.Linear(key.getCenterPosition().y, this.getHandIndxGlobalPosition(value).y, 0.2);
