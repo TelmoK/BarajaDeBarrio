@@ -37,7 +37,8 @@ export class PlayableCard extends Phaser.GameObjects.Container
 
         this.on(Phaser.Input.Events.DRAG, function (pointer, dragX, dragY) {
             if(!this.interactive) return;
-
+            
+            this.isPointerDragging = true;
             this.x = dragX;
             this.y = dragY;
         }, this);

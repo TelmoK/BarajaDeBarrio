@@ -17,6 +17,11 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
      */
     arcFactor;
 
+    /**
+     * @type {Phaser.GameObjects.Zone}
+     */
+    handDropArea;
+
     constructor(scene, x, y)
     {
         super(scene, x, y);
@@ -24,6 +29,33 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         this.cardPositioning = new Map();
         this.cardSpacingFactor = 0.05;
         this.arcFactor = 1;
+
+        this.handDropArea = scene.add.zone(0, 0, 500, 200);
+        
+        this.scene.physics.add.existing(this.handDropArea);
+        this.handDropArea.body.setAllowGravity(false);
+        
+        this.add(this.handDropArea);
+        this._resizeDropArea();
+    }
+
+    /**
+     * Resizes the area where cards can be droped and added to the card hand
+     */
+    _resizeDropArea()
+    {
+        const [firstCard] = this.cardPositioning.keys();
+        
+        if(firstCard == null) {
+            this.handDropArea.body.setSize(500, 160);
+            return;
+        }
+
+        let cardWidth = firstCard.cardBaseImage.width;
+
+        let cardHandTotalWidth = this.cardPositioning.size * cardWidth * (1 + this.cardSpacingFactor);
+
+        this.handDropArea.body.setSize(cardHandTotalWidth, this.handDropArea.body.height);
     }
 
     /**
@@ -42,6 +74,8 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         }, this);
 
         this.cardPositioning.set(card, posIndx);
+
+        this._resizeDropArea();
     }
 
     /**
@@ -87,6 +121,8 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         console.assert(card instanceof PlayableCard, "Error: card must be an instance of PlayableCard");
 
         this.cardPositioning.delete(card);
+
+        this._resizeDropArea();
     }
 
     /**
@@ -159,11 +195,10 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
             // Handling the switch movement of the dragged card in the hand
             if(card.isPointerDragging) 
             {
-                console.log("DRAGGING");
                 let cardNewPosIndx = this.getClosetsHandPositionIndx(card.getCenterPosition());
                 this.moveCardTo(card, cardNewPosIndx);
             }
-            //console.log(card.isPointerDragging);
+            
             let mouseX = this.scene.input.activePointer.x;
             let mouseY = this.scene.input.activePointer.y;
             //console.log(this.getClosetsHandPositionIndx(new Phaser.Math.Vector2(mouseX, mouseY)));
