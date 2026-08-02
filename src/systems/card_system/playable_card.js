@@ -35,22 +35,20 @@ export class PlayableCard extends Phaser.GameObjects.Container
         });
 
 
-        this.scene.input.on(Phaser.Input.Events.DRAG, function (pointer, gameObject, dragX, dragY) {
+        this.on(Phaser.Input.Events.DRAG, function (pointer, dragX, dragY) {
             if(!this.interactive) return;
 
-            gameObject.x = dragX;
-            gameObject.y = dragY;
-            //console.log(this.getCenter());
-            //console.log(new Phaser.Math.Vector2(this.x, this.y));
+            this.x = dragX;
+            this.y = dragY;
         }, this);
 
-        this.scene.input.on(Phaser.Input.Events.DRAG_START, function (pointer, gameObject, dragX, dragY) {
+        this.on(Phaser.Input.Events.DRAG_START, function () {
             if(!this.interactive) return;
 
             this.isPointerDragging = true;
         }, this);
 
-        this.scene.input.on(Phaser.Input.Events.DRAG_END, function (pointer, gameObject, dragX, dragY) {
+        this.on(Phaser.Input.Events.DRAG_END, function () {
             if(!this.interactive) return;
 
             this.isPointerDragging = false;
