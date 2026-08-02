@@ -17,12 +17,17 @@ export class PlayableCard extends Phaser.GameObjects.Container
      */
     isPointerDragging;
 
-    constructor(x, y, scene)
+    constructor(scene, x, y)
     {
+        console.assert(scene instanceof Phaser.Scene, "Error: scene must be a Phaser.Scene");
+        console.assert(typeof x === "number", "Error: x must be a number");
+        console.assert(typeof y === "number", "Error: y must be a number");
+        
         super(scene, x, y);
 
         this.interactive = true;
         this.isPointerDragging = false;
+        this.isInsideCardHand = false;
 
         this.cardBaseImage = scene.add.image(0, 0, SPRITES_ASSET_KEYS.TEST_CARD);
         this.cardBaseImage.setOrigin(0, 0);
@@ -72,5 +77,10 @@ export class PlayableCard extends Phaser.GameObjects.Container
 
         this.x = pos.x - this.cardBaseImage.width / 2;
         this.y = pos.y - this.cardBaseImage.height / 2;
+    }
+
+    getBounds()
+    {
+        return this.cardBaseImage.getBounds();
     }
 }

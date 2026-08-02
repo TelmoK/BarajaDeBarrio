@@ -1,6 +1,7 @@
 import { SPRITES_ASSET_KEYS } from "../utils/asset_keys.js";
 import { PlayableCard } from "../systems/card_system/playable_card.js";
 import { CardConatinerArea } from "../systems/card_system/card_container_area.js";
+import { CardManager } from "../systems/card_system/card_manager.js";
 
 export default class PreloadScene extends Phaser.Scene {
     constructor() {
@@ -59,7 +60,13 @@ export default class PreloadScene extends Phaser.Scene {
     create(data) {
        /* this.scene.start(KEYS_SCENES.MAIN_MENU);
         this.scene.stop();*/
-        let card = new PlayableCard(0, 0, this);
+        this.cardHand = new CardConatinerArea(this, 640, 600);
+        this.add.existing(this.cardHand);
+
+        this.cardManager = new CardManager(this, this.cardHand);
+        this.add.existing(this.cardManager);
+
+        /*let card = new PlayableCard(0, 0, this);
         this.add.existing(card);
         
         let card2 = new PlayableCard(300, 0, this);
@@ -67,16 +74,21 @@ export default class PreloadScene extends Phaser.Scene {
         
         let card3 = new PlayableCard(600, 0, this);
         this.add.existing(card3);
-
-        this.cardHand = new CardConatinerArea(this, 640, 600);
-        this.add.existing(this.cardHand);
+*/
+        let card = this.cardManager.instanceCard(0, 0);
+        let card2 = this.cardManager.instanceCard(300, 0);
+        let card3 = this.cardManager.instanceCard(600, 0);
 
         this.cardHand.includeCard(card);
         this.cardHand.includeCard(card2);
         this.cardHand.includeCard(card3);
     }
 
-    update(t, dt_ms) {
-        this.cardHand.update(dt_ms / 1000);
+    update(t, dt_ms) 
+    {
+        let dt = dt_ms / 1000; // Converting the delta time into seconds as many game engines do
+
+        this.cardHand.update(dt);
+        this.cardManager.update(dt);
     }
 }
