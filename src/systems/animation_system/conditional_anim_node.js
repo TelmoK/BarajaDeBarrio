@@ -30,6 +30,8 @@ export class ConditionalAnimNode extends AnimNode
 
     update(dt)
     {
+        // As this animation node has instantaneous effect there is no need to check this._isAnimationPlaying
+
         let switchCond = false;
         let i = 0;
 
@@ -42,5 +44,8 @@ export class ConditionalAnimNode extends AnimNode
             this.nextNode = this.conditinalBranches[i].animNode;
         else
             this.nextNode = null;
+
+        this._hasPlayedAnimation = true;
+        this._isAnimationPlaying = false;
     }
 }

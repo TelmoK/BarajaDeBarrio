@@ -46,6 +46,7 @@ export class AnimNode
         this.prevNode = null;
         this.duration = 0;
         this.currentTime = 0;
+        this.waitToEnd = true;
 
         this._isAnimationPlaying = false;
         this._hasPlayedAnimation = false;
@@ -54,7 +55,7 @@ export class AnimNode
     /**
      * Prepare the node to perform a foward animation
      */
-    startPlay()
+    initFowardPlay()
     {
         this._isAnimationPlaying = true;
         this._hasPlayedAnimation = false;
@@ -65,7 +66,7 @@ export class AnimNode
      * Prepare the node to perform an animation in reverse, it is meant to recieve a negative dt in the `update()` 
      * method for this purpose
      */
-    startReversePlay()
+    initReversePlay()
     {
         this._isAnimationPlaying = true;
         this._hasPlayedAnimation = false;
@@ -78,7 +79,9 @@ export class AnimNode
         {
             this.currentTime += dt;
             
-            if(this.currentTime < 0 || this.currentTime > this.duration) {
+            // Animations can end if the duration is passed (foward animation) or if the current time
+            // is negative (reverse animation)
+            if(this.currentTime <= 0 && dt < 0 || this.currentTime >= this.duration && dt >= 0) {
                 this._hasPlayedAnimation = true;
                 this._isAnimationPlaying = false;
             }

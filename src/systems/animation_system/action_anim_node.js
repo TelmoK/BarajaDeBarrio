@@ -26,10 +26,13 @@ export class ActionAnimNode extends AnimNode
 
     update(dt)
     {
+        // As this animation node has instantaneous effect there is no need to check this._isAnimationPlaying
+        
         if(this.action) {
             this.action();
-            this._hasPlayedAnimation = true;
-            this._isAnimationPlaying = false;
         }
+
+        this._hasPlayedAnimation = true;
+        this._isAnimationPlaying = false;
     }
 }
