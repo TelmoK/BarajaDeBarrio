@@ -54,6 +54,9 @@ export class CardManager
      */
     instanceCard(x, y)
     {
+        console.assert(typeof x === "number", "Error: x must be a number");
+        console.assert(typeof y === "number", "Error: y must be a number");
+
         let card = new PlayableCard(this.scene, x, y);
         this.scene.add.existing(card);
         this.cards.push(card);
@@ -63,12 +66,23 @@ export class CardManager
 
     addExisting(card)
     {
+        console.assert(card instanceof PlayableCard, "Error: card must be an instance of PlayableCard");
 
+        this.scene.add.existing(card);
     }
 
     destroyCard(card)
     {
+        console.assert(card instanceof PlayableCard, "Error: card must be an instance of PlayableCard");
 
+        this.cardHand.quitCard(card);
+
+        const index = this.cards.indexOf(card);
+        if (index > -1) {
+            this.cards.splice(index, 1);
+        }
+
+        card.destroy();
     }
 
     update(dt)
