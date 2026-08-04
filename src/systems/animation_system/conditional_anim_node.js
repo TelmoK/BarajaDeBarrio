@@ -2,7 +2,9 @@ import { AnimNode } from "./anim_node.js";
 
 /**
  * AnimNode that sets the next AnimNode depending on the evaluation of a chain of conditions, 
- * the conditions only influence the path of a foward animation 
+ * the conditions only influence the path of a foward animation. A `NodeAnimation` played in
+ * **reverse might have unexpected behaviour if it contains this type of node**, in that case
+ * make sure that the animation has being played fowards at least one time to reverse it.
  */
 export class ConditionalAnimNode extends AnimNode
 {
