@@ -1,7 +1,12 @@
 import { SPRITES_ASSET_KEYS } from "../utils/asset_keys.js";
+
 import { PlayableCard } from "../systems/card_system/playable_card.js";
 import { CardConatinerArea } from "../systems/card_system/card_container_area.js";
 import { CardManager } from "../systems/card_system/card_manager.js";
+
+import { ParallelAnimNode } from "../systems/animation_system/parallel_anim_node.js";
+import { DelayAnimNode } from "../systems/animation_system/delay_anim_node.js";
+import { ActionAnimNode } from "../systems/animation_system/action_anim_node.js";
 
 export default class PreloadScene extends Phaser.Scene {
     constructor() {
@@ -29,29 +34,9 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image(KEYS_ASSETS_SPRITES.CARD_ACTION_SELECTION_FRAME, "assets/card/card_action_type_selection_frame.png");
         this.load.spritesheet(KEYS_ASSETS_SPRITES.CARD_ATLAS, "assets/card/card_atlas.png", {frameWidth: 318, frameHeight: 244});
 
-        this.load.image(KEYS_ASSETS_SPRITES.BATTLE_SCENE_BACKGROUND, "assets/battle-scene-background.png");
-
-        this.load.image(KEYS_ASSETS_SPRITES.DICE_TYPE_D4, "assets/dice/dice_d4.png");
-        this.load.image(KEYS_ASSETS_SPRITES.DICE_TYPE_D6, "assets/dice/dice_d6.png");
-        this.load.image(KEYS_ASSETS_SPRITES.DICE_TYPE_D8, "assets/dice/dice_d8.png");
-        this.load.image(KEYS_ASSETS_SPRITES.DICE_TYPE_D10, "assets/dice/dice_d10.png");
-        this.load.image(KEYS_ASSETS_SPRITES.DICE_TYPE_D12, "assets/dice/dice_d12.png");
-        this.load.image(KEYS_ASSETS_SPRITES.DICE_TYPE_D20, "assets/dice/dice_d20.png");
-        this.load.image(KEYS_ASSETS_SPRITES.DICE_BOX, "assets/dice/dice_box.png");
-        this.load.image(KEYS_ASSETS_SPRITES.DICE_BOX_SELECTION_FRAME, "assets/dice/dice_box_selection.png");
-        this.load.image(KEYS_ASSETS_SPRITES.DICE_BOX_CONTAINER, "assets/dice/dice_box_container.png");
-
-        this.load.image(KEYS_ASSETS_SPRITES.TURN_EXECUTION_RING_BUTTON_PRESSED, "assets/turn_ring_button/finish_turn_button_pressed.png");
         this.load.image(KEYS_ASSETS_SPRITES.TURN_EXECUTION_RING_BUTTON_RELEASE, "assets/turn_ring_button/finish_turn_button_released.png");
 
         this.load.image(KEYS_ASSETS_SPRITES.EMOTION_ANGER_ICON, "assets/emotion_stack/anger_icon.png");
-        this.load.image(KEYS_ASSETS_SPRITES.EMOTION_HAPPINESS_ICON, "assets/emotion_stack/happiness_icon.png");
-        this.load.image(KEYS_ASSETS_SPRITES.EMOTION_CALM_ICON, "assets/emotion_stack/calm_icon.png");
-        this.load.image(KEYS_ASSETS_SPRITES.EMOTION_CONCERN_ICON, "assets/emotion_stack/concern_icon.png");
-        this.load.image(KEYS_ASSETS_SPRITES.EMOTION_CONFIDENCE_ICON, "assets/emotion_stack/confidence_icon.png");
-        this.load.image(KEYS_ASSETS_SPRITES.EMOTION_ECSTASY_ICON, "assets/emotion_stack/ecstasy_icon.png");
-        this.load.image(KEYS_ASSETS_SPRITES.EMOTION_FEAR_ICON, "assets/emotion_stack/fear_icon.png");
-        this.load.image(KEYS_ASSETS_SPRITES.EMOTION_SADNESS_ICON, "assets/emotion_stack/sadness_icon.png");
 
         this.load.plugin(KEYS_SHADER_PIPELINES.rexcrtpipelineplugin, 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexcrtpipelineplugin.min.js', true);
         this.load.plugin(KEYS_SHADER_PIPELINES.rextoonifypipelineplugin, 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextoonifypipelineplugin.min.js', true);*/
@@ -82,6 +67,38 @@ export default class PreloadScene extends Phaser.Scene {
         this.cardHand.includeCard(card);
         this.cardHand.includeCard(card2);
         this.cardHand.includeCard(card3);
+
+        // ----
+
+        this.nodeAnimation = new ParallelAnimNode();
+
+        let act1 =  new ActionAnimNode();
+        act1.action = function() {console.log("A")};
+
+        let act2 =  new ActionAnimNode();
+        act2.action = function() {console.log("B")};
+        
+        let act3 =  new ActionAnimNode();
+        act3.action = function() {console.log("C")};
+
+        let act4 =  new ActionAnimNode();
+        act4.action = function() {console.log("D")};
+
+        let del1 = new DelayAnimNode(0);
+        let del2 = new DelayAnimNode(0);
+        let del3 = new DelayAnimNode(0);
+
+        act1.nextNode = del1;
+        del1.nextNode = act2;  del1.prevNode = act1;
+        act2.nextNode = del2;  act2.prevNode = del1;
+        del2.nextNode = act3;  del2.prevNode = act2;
+        act3.nextNode = del3;  act3.prevNode = del2;
+        del3.nextNode = act4;  del3.prevNode = act3;
+                               act4.prevNode = del3;
+
+        this.nodeAnimation.addBranchNode(act1);
+        this.nodeAnimation.setNaturalDuration(); console.log(this.nodeAnimation.duration);
+        this.nodeAnimation.initFowardPlay();
     }
 
     update(t, dt_ms) 
@@ -90,5 +107,7 @@ export default class PreloadScene extends Phaser.Scene {
 
         this.cardHand.update(dt);
         this.cardManager.update(dt);
+
+        this.nodeAnimation.update(dt);
     }
 }

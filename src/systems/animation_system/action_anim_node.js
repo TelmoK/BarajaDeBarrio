@@ -10,27 +10,25 @@ export class ActionAnimNode extends AnimNode
      */
     action;
 
+    /**
+     * @type {function}
+     */
+    reverseAction;
+
     constructor()
     {
         super();
     }
 
-    /**
-     * 
-     * @param {function} action 
-     */
-    setAction(action)
-    {
-        this.action = action;
-    }
-
     update(dt)
-    {
-        // As this animation node has instantaneous effect there is no need to check this._isAnimationPlaying
-        
+    {        
+        /*if(dt < 0 && this.reverseAction) {
+            this.reverseAction();
+        }*/
         if(this.action) {
             this.action();
         }
+console.log("Action");
 
         this._hasPlayedAnimation = true;
         this._isAnimationPlaying = false;

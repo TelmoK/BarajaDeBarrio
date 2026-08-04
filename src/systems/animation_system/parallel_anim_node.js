@@ -85,7 +85,7 @@ export class ParallelAnimNode extends AnimNode
     {
         super.initFowardPlay();
 
-        //this.setMaxBranchDuration();
+        this.setMaxBranchDuration();
 
         // Prepare the initial parallel nodes iterating the different branches
         this.nodeBranches.forEach(function(animNodeBranch) {
@@ -144,64 +144,76 @@ export class ParallelAnimNode extends AnimNode
     {
         super.update(dt);
         
-        if(this._isAnimationPlaying)
-        {
-            // Calculating a delta time relative to the duration of the node
-            let speedRelativeDt = dt * this._maxBranchDuration / this.duration;
-            
-            this.nodeBranches.forEach( function(nodeBranch) { // Iterating the parallel animation branches
+        // Calculating a delta time relative to the duration of the node
+        let speedRelativeDt = dt;
+        
+        if(this.duration !== 0)
+            speedRelativeDt = dt * this._maxBranchDuration / this.duration;
+        
+        this.nodeBranches.forEach( function(nodeBranch) { // Iterating the parallel animation branches
 
-                // Iterate the animation nodes that are currently executing
-                for (let i = nodeBranch.currentExecutedNodes.length - 1; i >= 0; i--) 
+            // Iterate the animation nodes that are currently executing
+            for (let i = nodeBranch.currentExecutedNodes.length - 1; i >= 0; i--) 
+            {
+                let animNode = nodeBranch.currentExecutedNodes[i];
+
+                if (animNode._hasPlayedAnimation) // Node has finished the animation
                 {
-                    let animNode = nodeBranch.currentExecutedNodes[i];
-
-                    if (animNode._hasPlayedAnimation) // Node has finished the animation
+                    // If it was a foward animation the timer ended with the duration value or more
+                    if(animNode.currentTime >= animNode.duration) 
                     {
-                        // If it was a foward animation the timer ended with the duration value or more
-                        if(animNode.currentTime >= animNode.duration) 
-                        {
-                            let nextNode = animNode.nextNode;
+                        let nextNode = animNode.nextNode;
 
-                            while(nextNode && !nextNode.waitToEnd) {
-                                nextNode.initFowardPlay(); // Prepare the timer and flags of the node
-                                nodeBranch.currentExecutedNodes.push(nextNode); // Load the next node in the chain
-                                
-                                nextNode = nextNode.nextNode;
-                            }
+                        if(nextNode) {
+                            nextNode.initFowardPlay(); // Prepare the timer and flags of the node
+                            nodeBranch.currentExecutedNodes.push(nextNode); // Load the next node in the chain
+                            nextNode = nextNode.nextNode;
+                        }
+
+                        while(nextNode && !nextNode.waitToEnd) {
+                            nextNode.initFowardPlay(); // Prepare the timer and flags of the node
+                            nodeBranch.currentExecutedNodes.push(nextNode); // Load the next node in the chain
                             
-                            // Last node has ended (next node doesn't exist)
-                            if(!animNode.nextNode) {
-                                // If there has been a new condition branching we recalculate the padding
-                                if(nodeBranch.paddingDelayAnimNode.prevNode != animNode)
-                                    this.adjustFinalDelayPadding();
-                                
-                                // We play the delay animation just in case the animation is reversed during the wait
-                                nodeBranch.currentExecutedNodes.push(nodeBranch.paddingDelayAnimNode);
-
-                            }
+                            nextNode = nextNode.nextNode;
                         }
-                        // If it was a reverse animation the timer ended with value 0 or less
-                        else if(animNode.currentTime <= 0) 
-                        {
-                            let prevNode = animNode.prevNode;
+                        
+                        // Last node has ended (next node doesn't exist)
+                        if(!animNode.nextNode) {
+                            // If there has been a new condition branching we recalculate the padding
+                            if(nodeBranch.paddingDelayAnimNode.prevNode != animNode)
+                                this.adjustFinalDelayPadding();
+                            
+                            // We play the delay animation just in case the animation is reversed during the wait
+                            nodeBranch.currentExecutedNodes.push(nodeBranch.paddingDelayAnimNode);
 
-                            while(prevNode && !prevNode.waitToEnd) {
-                                prevNode.initReversePlay(); // Prepare the timer and flags of the node
-                                nodeBranch.currentExecutedNodes.push(prevNode); // Load the previous node in the chain
-                                
-                                prevNode = prevNode.prevNode;
-                            }
                         }
-
-                        nodeBranch.currentExecutedNodes.splice(i, 1);   // Erase node from the update list
                     }
-                    else // If the node is still executing 
+                    // If it was a reverse animation the timer ended with value 0 or less
+                    else if(animNode.currentTime <= 0) 
                     {
-                        animNode.update(speedRelativeDt);
+                        let prevNode = animNode.prevNode;
+                        
+                        if(prevNode) {
+                            prevNode.initReversePlay(); // Prepare the timer and flags of the node
+                            nodeBranch.currentExecutedNodes.push(prevNode); // Load the previous node in the chain
+                            prevNode = prevNode.prevNode;
+                        }
+
+                        while(prevNode && !prevNode.waitToEnd) {
+                            prevNode.initReversePlay(); // Prepare the timer and flags of the node
+                            nodeBranch.currentExecutedNodes.push(prevNode); // Load the previous node in the chain
+                            
+                            prevNode = prevNode.prevNode;
+                        }
                     }
+
+                    nodeBranch.currentExecutedNodes.splice(i, 1);   // Erase node from the update list
                 }
-            }, this);
-        }
+                else // If the node is still executing 
+                {
+                    animNode.update(speedRelativeDt);
+                }
+            }
+        }, this);
     }
 }

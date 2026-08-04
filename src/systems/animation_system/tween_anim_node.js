@@ -50,7 +50,7 @@ export class TweenAnimNode extends AnimNode
     {
         super.update(dt);
 
-        if(this._isAnimationPlaying && this.tween) 
+        if(this.tween) 
         {
             let tweenProgress = this.currentTime / this.duration;
             tweenProgress = Phaser.Math.Clamp(porcentaje, 0, 1); // Ensuring the value is between 0 and 1

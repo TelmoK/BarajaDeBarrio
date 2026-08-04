@@ -26,12 +26,6 @@ export class AnimNode
      * @type {boolean}
      */
     waitToEnd;
-
-    /**
-     * Whether the animation is being currently reproduced by the NodeAnimation or not
-     * @type {boolean}
-     */
-    _isAnimationPlaying;
     
     /**
      * Whether the animation has being reproduced by the NodeAnimation or not in the current sense of the animation 
@@ -48,7 +42,6 @@ export class AnimNode
         this.currentTime = 0;
         this.waitToEnd = true;
 
-        this._isAnimationPlaying = false;
         this._hasPlayedAnimation = false;
     }
 
@@ -57,7 +50,6 @@ export class AnimNode
      */
     initFowardPlay()
     {
-        this._isAnimationPlaying = true;
         this._hasPlayedAnimation = false;
         this.currentTime = 0;
     }
@@ -68,23 +60,19 @@ export class AnimNode
      */
     initReversePlay()
     {
-        this._isAnimationPlaying = true;
         this._hasPlayedAnimation = false;
         this.currentTime = this.duration;
     }
 
     update(dt)
     {
-        if(this._isAnimationPlaying) 
-        {
-            this.currentTime += dt;
-            
-            // Animations can end if the duration is passed (foward animation) or if the current time
-            // is negative (reverse animation)
-            if(this.currentTime <= 0 && dt < 0 || this.currentTime >= this.duration && dt >= 0) {
-                this._hasPlayedAnimation = true;
-                this._isAnimationPlaying = false;
-            }
+        this.currentTime += dt;
+        
+        // Animations can end if the duration is passed (foward animation) or if the current time
+        // is negative (reverse animation)
+        if(this.duration === 0 || this.currentTime <= 0 && dt < 0 || this.currentTime >= this.duration && dt >= 0) {
+            this._hasPlayedAnimation = true;
         }
+        
     }
 }

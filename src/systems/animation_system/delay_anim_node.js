@@ -5,10 +5,20 @@ import { AnimNode } from "./anim_node.js";
  */
 export class DelayAnimNode extends AnimNode
 {
+    /**
+     * 
+     * @param {number} delay 
+     */
     constructor(delay)
     {
         super();
 
         this.duration = delay;
+    }
+
+    update(dt)
+    {
+        super.update(dt);
+        console.log(`Time left ${this.currentTime}`)
     }
 }
