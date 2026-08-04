@@ -4,20 +4,21 @@ import { DelayAnimNode } from "./delay_anim_node.js";
 export class ParallelAnimNode extends AnimNode
 {
     /**
-     * @type {Array<{headNode: AnimNode, currentExecutedNodes: Array<AnimNode>, paddingDelayAnimNode: DelayAnimNode}>}
+     * @type {Array<{headNode: AnimNode, currentExecutedNodes: Array<AnimNode>, paddingDelayAnimNode: DelayAnimNode, branchDuration: number}>}
      */
     nodeBranches;
 
     /**
-     * @type {Array<AnimNode>}
+     * @type {number}
      */
-    _currentExecutedNodes;
+    _maxBranchDuration;
 
     constructor()
     {
         super();
 
         this.nodeBranches = new Array();
+        this._maxBranchDuration = 0;
     }
 
     /**
@@ -32,15 +33,16 @@ export class ParallelAnimNode extends AnimNode
             paddingDelayAnimNode: new DelayAnimNode(-1),
             branchDuration: animNode.duration
         });
+
+        this.adjustFinalDelayPadding();
     }
- 
+
     /**
-     * As some branches may be shorter and end sooner, it is necessary to define a padding delay
-     * at the end of the animation, which will be the begining of the reverse animation
+     * Looks for the longest animation branch and sets the `_maxBranchDuration` variable to its duration
      */
-    adjustFinalDelayPadding()
+    setMaxBranchDuration()
     {
-        let maxBranchDuration = 0;
+        this._maxBranchDuration = 0;
 
         this.nodeBranches.forEach(function(animNodeBranch) {
             // Look for the end of the animation chain
@@ -57,22 +59,33 @@ export class ParallelAnimNode extends AnimNode
 
             animNodeBranch.branchDuration = totalBranchDuration;
 
-            if(totalBranchDuration > maxBranchDuration) // Keep track of the longest animation
-                maxBranchDuration = totalBranchDuration;
+            if(totalBranchDuration > this._maxBranchDuration) // Keep track of the longest animation
+                this._maxBranchDuration = totalBranchDuration;
             
             // Prepare the next node after the delay in this reverse animation
             animNodeBranch.paddingDelayAnimNode.prevNode = lastBranchAnimNode;
         }, this);
+    }
+ 
+    /**
+     * As some branches may be shorter and end sooner, it is necessary to define a padding delay
+     * at the end of the animation, which will be the begining of the reverse animation
+     */
+    adjustFinalDelayPadding()
+    {
+        this.setMaxBranchDuration();
 
         this.nodeBranches.forEach(function(animNodeBranch) {
             // Set the padding delay time of the branch
-            animNodeBranch.paddingDelayAnimNode.duration = maxBranchDuration - animNodeBranch.branchDuration;
+            animNodeBranch.paddingDelayAnimNode.duration = this._maxBranchDuration - animNodeBranch.branchDuration;
         }, this);
     }
 
     initFowardPlay()
     {
         super.initFowardPlay();
+
+        //this.setMaxBranchDuration();
 
         // Prepare the initial parallel nodes iterating the different branches
         this.nodeBranches.forEach(function(animNodeBranch) {
@@ -108,19 +121,34 @@ export class ParallelAnimNode extends AnimNode
         }, this);
     }
 
+    /**
+     * Set the duration of the animation node to the especified one making the sub-animations slower or faster if
+     * it is necessary
+     * @param {number} fixedDuration 
+     */
+    fixDurationTo(fixedDuration)
+    {
+        this.duration = fixedDuration;
+    }
+
+    /**
+     * Adjusts the duration of the node to the duration of the longest sub-animation
+     */
+    setNaturalDuration()
+    {
+        this.setMaxBranchDuration();
+        this.duration = this._maxBranchDuration;
+    }
+
     update(dt)
     {
-        let speedRelativeDt = dt;
-
-        if(this.duration >= 0) {
-            super.update(dt);
-            
-            if(this.duration > 0)
-                speedRelativeDt = dt * this.maxBranchDuration / this.duration;
-        }
-
+        super.update(dt);
+        
         if(this._isAnimationPlaying)
         {
+            // Calculating a delta time relative to the duration of the node
+            let speedRelativeDt = dt * this._maxBranchDuration / this.duration;
+            
             this.nodeBranches.forEach( function(nodeBranch) { // Iterating the parallel animation branches
 
                 // Iterate the animation nodes that are currently executing
