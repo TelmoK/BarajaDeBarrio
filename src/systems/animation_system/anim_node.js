@@ -62,15 +62,23 @@ export class AnimNode
     {
         this._hasPlayedAnimation = false;
         this.currentTime = this.duration;
+
+        if(this.prevNode)
+            this.prevNode.initReversePlay();
     }
 
     update(dt)
     {
+        if(this.duration === 0) {
+            this._hasPlayedAnimation = true;
+            return;
+        }
+
         this.currentTime += dt;
         
         // Animations can end if the duration is passed (foward animation) or if the current time
         // is negative (reverse animation)
-        if(this.duration === 0 || this.currentTime <= 0 && dt < 0 || this.currentTime >= this.duration && dt >= 0) {
+        if(this.currentTime <= 0 && dt < 0 || this.currentTime >= this.duration && dt >= 0) {
             this._hasPlayedAnimation = true;
         }
         

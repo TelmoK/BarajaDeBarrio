@@ -160,7 +160,7 @@ export class ParallelAnimNode extends AnimNode
                 if (animNode._hasPlayedAnimation) // Node has finished the animation
                 {
                     // If it was a foward animation the timer ended with the duration value or more
-                    if(animNode.currentTime >= animNode.duration) 
+                    if(animNode.currentTime >= animNode.duration && dt >= 0) 
                     {
                         let nextNode = animNode.nextNode;
 
@@ -207,7 +207,7 @@ export class ParallelAnimNode extends AnimNode
                         }
                     }
 
-                    nodeBranch.currentExecutedNodes.splice(i, 1);   // Erase node from the update list
+                    nodeBranch.currentExecutedNodes.splice(i, 1); // Erase node from the update list
                 }
                 else // If the node is still executing 
                 {

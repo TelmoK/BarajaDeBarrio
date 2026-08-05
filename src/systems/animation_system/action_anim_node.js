@@ -22,15 +22,13 @@ export class ActionAnimNode extends AnimNode
 
     update(dt)
     {        
-        /*if(dt < 0 && this.reverseAction) {
+        if(dt < 0 && this.reverseAction) {
             this.reverseAction();
-        }*/
-        if(this.action) {
+        }
+        else if(this.action) {
             this.action();
         }
-console.log("Action");
 
         this._hasPlayedAnimation = true;
-        this._isAnimationPlaying = false;
     }
 }

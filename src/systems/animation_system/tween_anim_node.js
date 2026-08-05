@@ -8,7 +8,7 @@ export class TweenAnimNode extends AnimNode
     /**
      * @type {Phaser.Tweens.Tween | Phaser.Tweens.TweenChain}
      */
-    tween;
+    tweenRef;
 
     /**
      * @type {Phaser.Scene}
@@ -17,9 +17,20 @@ export class TweenAnimNode extends AnimNode
 
     constructor(scene)
     {
+        console.assert(scene instanceof Phaser.Scene, "Error: scene must be an instance of Phaser.Scene");
+
         super();
 
         this.scene = scene;
+    }
+
+    initReversePlay()
+    {
+        super.initReversePlay();
+
+        // Set the tween at the end
+        if(this.tweenRef)
+            this.tweenRef.seek(this.duration * 1000); // Phaser works with milliseconds
     }
 
     /**
@@ -29,9 +40,9 @@ export class TweenAnimNode extends AnimNode
     tween(tweenConf)
     {
         tweenConf.paused = true;
-        this.duration = tweenConf.duration;
+        this.duration = tweenConf.duration / 1000; // Phaser works with milliseconds
 
-        this.tween = this.scene.tweens.add(tweenConf);
+        this.tweenRef = this.scene.tweens.add(tweenConf);
     }
 
     /**
@@ -41,22 +52,19 @@ export class TweenAnimNode extends AnimNode
     chain(tweenChainConf)
     {
         tweenChainConf.paused = true;        
-        this.duration = tweenChainConf.duration;
+        this.duration = tweenChainConf.duration / 1000; // Phaser works with milliseconds
 
-        this.tween = this.scene.tweens.chain(tweenChainConf);
+        this.tweenRef = this.scene.tweens.chain(tweenChainConf);
     }
 
     update(dt)
     {
         super.update(dt);
 
-        if(this.tween) 
+        if(this.tweenRef) 
         {
-            let tweenProgress = this.currentTime / this.duration;
-            tweenProgress = Phaser.Math.Clamp(porcentaje, 0, 1); // Ensuring the value is between 0 and 1
-
-            // Applying the percentaje manually tween
-            this.tween.setProgress(tweenProgress);
+            // Applying the timepoint of the tween (in milliseconds)
+            this.tweenRef.seek(this.currentTime * 1000);
         }
     }
 }

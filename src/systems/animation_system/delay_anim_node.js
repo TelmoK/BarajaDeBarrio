@@ -15,10 +15,4 @@ export class DelayAnimNode extends AnimNode
 
         this.duration = delay;
     }
-
-    update(dt)
-    {
-        super.update(dt);
-        console.log(`Time left ${this.currentTime}`)
-    }
 }

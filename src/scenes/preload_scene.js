@@ -7,6 +7,7 @@ import { CardManager } from "../systems/card_system/card_manager.js";
 import { ParallelAnimNode } from "../systems/animation_system/parallel_anim_node.js";
 import { DelayAnimNode } from "../systems/animation_system/delay_anim_node.js";
 import { ActionAnimNode } from "../systems/animation_system/action_anim_node.js";
+import { TweenAnimNode } from "../systems/animation_system/tween_anim_node.js";
 
 export default class PreloadScene extends Phaser.Scene {
     constructor() {
@@ -72,21 +73,30 @@ export default class PreloadScene extends Phaser.Scene {
 
         this.nodeAnimation = new ParallelAnimNode();
 
-        let act1 =  new ActionAnimNode();
-        act1.action = function() {console.log("A")};
+        let img = this.add.image(0, 0, SPRITES_ASSET_KEYS.TEST_CARD);
+        img.setOrigin(0,0);
+
+        let act1 =  new TweenAnimNode(this);
+        act1.tween({
+            targets: img,      // El objeto o array de objetos a animar
+            x: 600,                 // Propiedad final (se moverá a x=500)
+            duration: 2000,
+            callbackScope: this
+        });
 
         let act2 =  new ActionAnimNode();
         act2.action = function() {console.log("B")};
         
         let act3 =  new ActionAnimNode();
         act3.action = function() {console.log("C")};
+        act3.reverseAction = function() {console.log("cccc")}
 
         let act4 =  new ActionAnimNode();
         act4.action = function() {console.log("D")};
 
-        let del1 = new DelayAnimNode(0);
-        let del2 = new DelayAnimNode(0);
-        let del3 = new DelayAnimNode(0);
+        let del1 = new DelayAnimNode(3);
+        let del2 = new DelayAnimNode(3);
+        let del3 = new DelayAnimNode(3);
 
         act1.nextNode = del1;
         del1.nextNode = act2;  del1.prevNode = act1;
@@ -99,6 +109,8 @@ export default class PreloadScene extends Phaser.Scene {
         this.nodeAnimation.addBranchNode(act1);
         this.nodeAnimation.setNaturalDuration(); console.log(this.nodeAnimation.duration);
         this.nodeAnimation.initFowardPlay();
+
+        this.sign = false;
     }
 
     update(t, dt_ms) 
@@ -108,6 +120,8 @@ export default class PreloadScene extends Phaser.Scene {
         this.cardHand.update(dt);
         this.cardManager.update(dt);
 
+        if(this.nodeAnimation.currentTime > 9) this.sign = true;
+        if(this.sign) dt *= -1;
         this.nodeAnimation.update(dt);
     }
 }

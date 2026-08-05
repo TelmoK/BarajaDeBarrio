@@ -32,20 +32,16 @@ export class ConditionalAnimNode extends AnimNode
 
     update(dt)
     {
-        let switchCond = false;
         let i = 0;
-
-        while(i < this.conditinalBranches.length && !switchCond) {
-            switchCond = this.conditinalBranches[i].conditionEvaluation();
+        while(i < this.conditinalBranches.length && !this.conditinalBranches[i].conditionEvaluation()) {
             i++;
         }
 
-        if(switchCond)
+        if(i < this.conditinalBranches.length)
             this.nextNode = this.conditinalBranches[i].animNode;
         else
             this.nextNode = null;
 
         this._hasPlayedAnimation = true;
-        this._isAnimationPlaying = false;
     }
 }
