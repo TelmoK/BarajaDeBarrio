@@ -2,6 +2,7 @@ import { SPRITES_ASSET_KEYS } from "../utils/asset_keys.js";
 
 import { PlayableCard } from "../systems/card_system/playable_card.js";
 import { CardConatinerArea } from "../systems/card_system/card_container_area.js";
+import { CardHandArea } from "../systems/card_system/card_hand_area.js";
 import { CardManager } from "../systems/card_system/card_manager.js";
 
 import { ParallelAnimNode } from "../systems/animation_system/parallel_anim_node.js";
@@ -46,7 +47,7 @@ export default class PreloadScene extends Phaser.Scene {
     create(data) {
        /* this.scene.start(KEYS_SCENES.MAIN_MENU);
         this.scene.stop();*/
-        this.cardHand = new CardConatinerArea(this, 640, 600);
+        this.cardHand = new CardHandArea(this, 640, 600);
         this.add.existing(this.cardHand);
 
         this.cardManager = new CardManager(this, this.cardHand);

@@ -235,17 +235,8 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
     update(dt)
     {
         this.cardPositioning.forEach(function(posIndx, card) {
-            // Handling the switch movement of the dragged card in the hand
-            if(card.isPointerDragging) 
-            {
-                let cardNewPosIndx = this.getClosetsHandPositionIndx(card.getCenterPosition());
-                this.moveCardTo(card, cardNewPosIndx);
-            }
+            if(!card) return;
             
-            //let mouseX = this.scene.input.activePointer.x;
-            //let mouseY = this.scene.input.activePointer.y;
-            //console.log(this.getClosetsHandPositionIndx(new Phaser.Math.Vector2(mouseX, mouseY)));
-
             // Handling the card's positioning in the hand
             if(card == null || card.isPointerDragging) return;
 

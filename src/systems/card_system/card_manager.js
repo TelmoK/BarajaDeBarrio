@@ -1,5 +1,6 @@
 import { PlayableCard } from "./playable_card.js";
 import { CardConatinerArea } from "./card_container_area.js";
+import { CardHandArea } from "./card_hand_area.js";
 
 export class CardManager
 {
@@ -15,14 +16,14 @@ export class CardManager
     scene;
 
     /**
-     * @type {CardConatinerArea}
+     * @type {CardHandArea}
      */
     cardHand;
 
     constructor(scene, cardHand)
     {
         console.assert(scene instanceof Phaser.Scene, "Error: scene must be a Phaser.Scene");
-        console.assert(cardHand instanceof CardConatinerArea, "Error: cardHand must be a CardConatinerArea");
+        console.assert(cardHand instanceof CardHandArea, "Error: cardHand must be a CardHandArea");
 
         this.scene = scene;
         this.cardHand = cardHand;
