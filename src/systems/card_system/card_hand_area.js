@@ -2,9 +2,76 @@ import { CardConatinerArea } from "./card_container_area.js";
 
 export class CardHandArea extends CardConatinerArea
 {
+    /**
+     * @type {Phaser.GameObjects.Zone}
+     */
+    handDropArea;
+
     constructor(scene, x, y)
     {
         super(scene, x, y);
+
+        this.handDropArea = scene.add.zone(0, 0, 500, 200);
+        
+        this.scene.physics.add.existing(this.handDropArea);
+        this.handDropArea.body.setAllowGravity(false);
+        
+        this.add(this.handDropArea);
+        
+        this._resizeDropArea();
+    }
+
+    /**
+     * Resizes the area where cards can be droped and added to the card hand
+     */
+    _resizeDropArea()
+    {
+        const [firstCard] = this.cardPositioning.keys();
+        
+        if(firstCard == null) {
+            this.handDropArea.body.setSize(500, 160);
+            return;
+        }
+
+        let cardWidth = firstCard.widthInContainer();
+
+        let cardHandTotalWidth = this.cardPositioning.size * cardWidth * (1 + this.cardSpacingFactor) * 1.05;
+
+        this.handDropArea.body.setSize(cardHandTotalWidth, this.handDropArea.body.height);
+    }
+
+    /**
+     * 
+     * @param {PlayableCard} card 
+     * @param {number} posIndx 
+     */
+    insertCard(card, posIndx)
+    {
+        super.insertCard(card, posIndx);
+
+        this._resizeDropArea();
+    }
+
+    /**
+     * 
+     * @param {PlayableCard} card 
+     */
+    includeCard(card)
+    {
+        super.includeCard(card);
+
+        this._resizeDropArea();
+    }
+
+    /**
+     * 
+     * @param {PlayableCard} card 
+     */
+    quitCard(card)
+    {
+        super.quitCard(card);
+
+        this._resizeDropArea();
     }
 
     update(dt)

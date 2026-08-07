@@ -17,11 +17,6 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
      */
     arcFactor;
 
-    /**
-     * @type {Phaser.GameObjects.Zone}
-     */
-    handDropArea;
-
     constructor(scene, x, y)
     {
         console.assert(scene instanceof Phaser.Scene, "Error: scene must be a Phaser.Scene");
@@ -33,33 +28,6 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         this.cardPositioning = new Map();
         this.cardSpacingFactor = 0.05;
         this.arcFactor = 1;
-
-        this.handDropArea = scene.add.zone(0, 0, 500, 200);
-        
-        this.scene.physics.add.existing(this.handDropArea);
-        this.handDropArea.body.setAllowGravity(false);
-        
-        this.add(this.handDropArea);
-        this._resizeDropArea();
-    }
-
-    /**
-     * Resizes the area where cards can be droped and added to the card hand
-     */
-    _resizeDropArea()
-    {
-        const [firstCard] = this.cardPositioning.keys();
-        
-        if(firstCard == null) {
-            this.handDropArea.body.setSize(500, 160);
-            return;
-        }
-
-        let cardWidth = firstCard.widthInContainer();
-
-        let cardHandTotalWidth = this.cardPositioning.size * cardWidth * (1 + this.cardSpacingFactor) * 1.05;
-
-        this.handDropArea.body.setSize(cardHandTotalWidth, this.handDropArea.body.height);
     }
 
     /**
@@ -81,8 +49,6 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         }, this);
 
         this.cardPositioning.set(card, posIndx);
-        
-        this._resizeDropArea();
     }
 
     /**
@@ -117,7 +83,6 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
             // Just add the card at the end by directly assigning the new last index to the card
             if(lastCard && lastCard.x < card.x) {
                 this.cardPositioning.set(card, this.cardPositioning.size);
-                this._resizeDropArea();
                 return;
             }
         }
@@ -164,8 +129,6 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         }, this);
 
         this.cardPositioning.delete(card);
-
-        this._resizeDropArea();
     }
 
     /**
