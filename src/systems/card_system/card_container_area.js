@@ -55,7 +55,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
             return;
         }
 
-        let cardWidth = firstCard.cardBaseImage.width;
+        let cardWidth = firstCard.widthInContainer();
 
         let cardHandTotalWidth = this.cardPositioning.size * cardWidth * (1 + this.cardSpacingFactor) * 1.05;
 
@@ -184,7 +184,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         if(firstCard == null) 
             return 0;
 
-        cardWidth = firstCard.cardBaseImage.width;
+        cardWidth = firstCard.widthInContainer();
 
         let cardHandTotalWidth = this.cardPositioning.size * cardWidth * (1 + this.cardSpacingFactor);
         
@@ -207,7 +207,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         let cardWidth = 0;
         
         if(firstCard != null)
-            cardWidth = firstCard.cardBaseImage.width;
+            cardWidth = firstCard.widthInContainer();
 
         let cardHandTotalWidth = this.cardPositioning.size * cardWidth * (1 + this.cardSpacingFactor);
         
@@ -236,7 +236,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
     {
         this.cardPositioning.forEach(function(posIndx, card) {
             if(!card) return;
-            
+
             // Handling the card's positioning in the hand
             if(card == null || card.isPointerDragging) return;
 

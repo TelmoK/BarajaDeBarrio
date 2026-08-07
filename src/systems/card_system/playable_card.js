@@ -71,6 +71,10 @@ export class PlayableCard extends Phaser.GameObjects.Container
         return new Phaser.Math.Vector2(this.x + this.cardBaseImage.width / 2, this.y + this.cardBaseImage.height / 2);
     }
 
+    /**
+     *
+     * @param {Phase.Math.Vector2} pos
+     */
     setCenterPosition(pos)
     {
         console.assert(pos instanceof Phaser.Math.Vector2, "Error: pos must be an instance of Phaser.Math.Vector2");
@@ -79,8 +83,8 @@ export class PlayableCard extends Phaser.GameObjects.Container
         this.y = pos.y - this.cardBaseImage.height / 2;
     }
 
-    getBounds()
+    widthInContainer()
     {
-        return this.cardBaseImage.getBounds();
+        return this.cardBaseImage.width;
     }
 }
