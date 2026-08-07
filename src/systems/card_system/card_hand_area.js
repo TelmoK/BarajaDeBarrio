@@ -1,4 +1,5 @@
 import { CardConatinerArea } from "./card_container_area.js";
+import { PlayableCard } from "./playable_card.js";
 
 export class CardHandArea extends CardConatinerArea
 {
@@ -47,6 +48,8 @@ export class CardHandArea extends CardConatinerArea
      */
     insertCard(card, posIndx)
     {
+        console.assert(card instanceof PlayableCard, "Error: card must be an instance of PlayableCard");
+
         super.insertCard(card, posIndx);
 
         this._resizeDropArea();
@@ -58,6 +61,8 @@ export class CardHandArea extends CardConatinerArea
      */
     includeCard(card)
     {
+        console.assert(card instanceof PlayableCard, "Error: card must be an instance of PlayableCard");
+
         super.includeCard(card);
 
         this._resizeDropArea();
@@ -69,6 +74,8 @@ export class CardHandArea extends CardConatinerArea
      */
     quitCard(card)
     {
+        console.assert(card instanceof PlayableCard, "Error: card must be an instance of PlayableCard");
+
         super.quitCard(card);
 
         this._resizeDropArea();

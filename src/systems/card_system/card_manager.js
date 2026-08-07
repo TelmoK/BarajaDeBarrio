@@ -1,4 +1,5 @@
 import { PlayableCard } from "./playable_card.js";
+import { Card } from "./card.js";
 import { CardConatinerArea } from "./card_container_area.js";
 import { CardHandArea } from "./card_hand_area.js";
 
@@ -6,7 +7,7 @@ export class CardManager
 {
     /**
      * Array that contains all the `PlayableCards`'s in the current scene
-     * @type {Array<PlayableCard>}
+     * @type {Array<Card>}
      */
     cards;
 
@@ -67,14 +68,14 @@ export class CardManager
 
     addExisting(card)
     {
-        console.assert(card instanceof PlayableCard, "Error: card must be an instance of PlayableCard");
+        console.assert(card instanceof Card, "Error: card must be an instance of PlayableCard");
 
         this.scene.add.existing(card);
     }
 
     destroyCard(card)
     {
-        console.assert(card instanceof PlayableCard, "Error: card must be an instance of PlayableCard");
+        console.assert(card instanceof Card, "Error: card must be an instance of PlayableCard");
 
         this.cardHand.quitCard(card);
 

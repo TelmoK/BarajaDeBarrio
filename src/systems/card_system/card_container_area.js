@@ -1,9 +1,10 @@
-import { PlayableCard } from './playable_card.js';
+//import { PlayableCard } from './playable_card.js';
+import { Card } from './card.js';
 
 export class CardConatinerArea extends Phaser.GameObjects.Container
 {
     /**
-     * @type {Map<PlayableCard, number>}
+     * @type {Map<Card, number>}
      */
     cardPositioning;
 
@@ -32,12 +33,12 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
 
     /**
      * 
-     * @param {PlayableCard} card 
+     * @param {Card} card 
      * @param {number} posIndx 
      */
     insertCard(card, posIndx)
     {
-        console.assert(card instanceof PlayableCard, "Error: card must be an instance of PlayableCard");
+        console.assert(card instanceof Card, "Error: card must be an instance of Card");
         console.assert(typeof posIndx === "number", "Error: posIndx must be a number");
 
         if(this.cardPositioning.has(card)) 
@@ -53,11 +54,11 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
 
     /**
      * 
-     * @param {PlayableCard} card 
+     * @param {Card} card 
      */
     includeCard(card)
     {
-        console.assert(card instanceof PlayableCard, "Error: card must be an instance of PlayableCard");
+        console.assert(card instanceof Card, "Error: card must be an instance of Card");
 
         if(this.cardPositioning.has(card)) 
             return;
@@ -93,12 +94,12 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
 
     /**
      * 
-     * @param {PlayableCard} card 
+     * @param {Card} card 
      * @param {number} posIndx 
      */
     moveCardTo(card, posIndx)
     {
-        console.assert(card instanceof PlayableCard, "Error: card must be an instance of PlayableCard");
+        console.assert(card instanceof Card, "Error: card must be an instance of Card");
         console.assert(typeof posIndx === "number", "Error: posIndx must be a number");
         console.assert(posIndx < this.cardPositioning.size && posIndx >= 0, `Error: posIndx is out of the bounds of the card hand ${posIndx}`);
 
@@ -115,11 +116,11 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
 
     /**
      * 
-     * @param {PlayableCard} card 
+     * @param {Card} card 
      */
     quitCard(card)
     {
-        console.assert(card instanceof PlayableCard, "Error: card must be an instance of PlayableCard");
+        console.assert(card instanceof Card, "Error: card must be an instance of Card");
         
         let freedIndxPos = this.cardPositioning.get(card);
 
@@ -132,7 +133,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
     }
 
     /**
-     * Returns the index of the closest PlayableCard contained in the card hand
+     * Returns the index of the closest Card contained in the card hand
      * @param {Phaser.Math.Vector2} pos 
      * @returns {number}
      */
@@ -182,12 +183,12 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
 
     /**
      * 
-     * @param {PlayableCard} card 
+     * @param {Card} card 
      * @returns {boolean}
      */
     conatinsCard(card)
     {
-        console.assert(card instanceof PlayableCard, "Error: card must be an instance of PlayableCard");
+        console.assert(card instanceof Card, "Error: card must be an instance of Card");
 
         return this.cardPositioning.has(card);
     }

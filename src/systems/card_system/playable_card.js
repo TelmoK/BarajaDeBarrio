@@ -1,16 +1,12 @@
 import { SPRITES_ASSET_KEYS } from "../../utils/asset_keys.js";
+import { Card } from "./card.js";
 
-export class PlayableCard extends Phaser.GameObjects.Container
+export class PlayableCard extends Card
 {
     /**
      * @type {Phaser.GameObjects.Image}
      */
     cardBaseImage;
-
-    /**
-     * @type {boolean}
-     */
-    interactive;
 
     /**
      * @type {boolean}
@@ -25,9 +21,7 @@ export class PlayableCard extends Phaser.GameObjects.Container
         
         super(scene, x, y);
 
-        this.interactive = true;
         this.isPointerDragging = false;
-        this.isInsideCardHand = false;
 
         this.cardBaseImage = scene.add.image(0, 0, SPRITES_ASSET_KEYS.TEST_CARD);
         this.cardBaseImage.setOrigin(0, 0);
