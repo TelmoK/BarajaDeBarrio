@@ -89,7 +89,7 @@ export class CardHandArea extends CardConatinerArea
             // Handling the switch movement of the dragged card in the hand
             if(card.isPointerDragging) 
             {
-                let cardNewPosIndx = this.getClosetsHandPositionIndx(card.getCenterPosition());
+                let cardNewPosIndx = this.getClosetsContainerPositionIndx(card.getCenterPosition());
                 this.moveCardTo(card, cardNewPosIndx);
             }
             
@@ -100,8 +100,8 @@ export class CardHandArea extends CardConatinerArea
             // Handling the card's positioning in the hand
             if(card == null || card.isPointerDragging) return;
 
-            let x = Phaser.Math.Linear(card.getCenterPosition().x, this.getHandIndxGlobalPosition(posIndx).x, 0.2);
-            let y = Phaser.Math.Linear(card.getCenterPosition().y, this.getHandIndxGlobalPosition(posIndx).y, 0.2);
+            let x = Phaser.Math.Linear(card.getCenterPosition().x, this.getContainerIndxGlobalPosition(posIndx).x, 0.2);
+            let y = Phaser.Math.Linear(card.getCenterPosition().y, this.getContainerIndxGlobalPosition(posIndx).y, 0.2);
             
             card.setCenterPosition(new Phaser.Math.Vector2(x, y));
         }, this);

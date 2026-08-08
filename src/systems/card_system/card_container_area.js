@@ -165,7 +165,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
      * @param {number} indx 
      * @returns {Phaser.Math.Vector2}
      */
-    getConatinerIndxGlobalPosition(indx)
+    getContainerIndxGlobalPosition(indx)
     {
         console.assert(typeof indx === "number", "Error: indx must be a number");
 
@@ -238,8 +238,8 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
             // Handling the card's positioning in the hand
             if(card == null || card.isPointerDragging) return;
 
-            let x = Phaser.Math.Linear(card.getCenterPosition().x, this.getConatinerIndxGlobalPosition(posIndx).x, 0.2);
-            let y = Phaser.Math.Linear(card.getCenterPosition().y, this.getConatinerIndxGlobalPosition(posIndx).y, 0.2);
+            let x = Phaser.Math.Linear(card.getCenterPosition().x, this.getContainerIndxGlobalPosition(posIndx).x, 0.2);
+            let y = Phaser.Math.Linear(card.getCenterPosition().y, this.getContainerIndxGlobalPosition(posIndx).y, 0.2);
             
             card.setCenterPosition(new Phaser.Math.Vector2(x, y));
         }, this);
