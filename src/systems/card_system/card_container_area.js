@@ -63,7 +63,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         if(this.cardPositioning.has(card)) 
             return;
 
-        let newCardIndex = this.getClosetsHandPositionIndx(card.getCenterPosition());
+        let newCardIndex = this.getClosetsContainerPositionIndx(card.getCenterPosition());
 
         // If the card is added to the last position by the right the insertion that pushes the past
         // last element to the right creates a flick when the hand tries to reposition the cards
@@ -137,7 +137,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
      * @param {Phaser.Math.Vector2} pos 
      * @returns {number}
      */
-    getClosetsHandPositionIndx(pos)
+    getClosetsContainerPositionIndx(pos)
     {
         console.assert(pos instanceof Phaser.Math.Vector2, "Error: pos must be an instance of Phaser.Math.Vector2");
 
@@ -165,8 +165,10 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
      * @param {number} indx 
      * @returns {Phaser.Math.Vector2}
      */
-    getHandIndxGlobalPosition(indx)
+    getConatinerIndxGlobalPosition(indx)
     {
+        console.assert(typeof indx === "number", "Error: indx must be a number");
+
         const [firstCard] = this.cardPositioning.keys();
         let cardWidth = 0;
         
@@ -179,6 +181,38 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         let cardHandLeftBorderX = this.x - cardHandTotalWidth / 2;
 
         return new Phaser.Math.Vector2(cardHandLeftBorderX + cardChunkWidth / 2 + cardChunkWidth * indx, this.y);
+    }
+
+    /**
+     * 
+     * @param {Card} card 
+     * @returns {number}
+     */
+    getCardIndx(card)
+    {
+        if(!this.cardPositioning.has(card))
+            return -1;
+
+        return this.cardPositioning.get(card);
+    }
+
+    /**
+     * 
+     * @param {number} posIndx 
+     * @returns {Array<Card>}
+     */
+    getCardsAt(posIndx)
+    {
+        console.assert(typeof posIndx === "number", "Error: posIndx must be a number");
+
+        let cards = new Array();
+
+        this.cardPositioning.forEach(function(value, cardInCont) {
+            if(value === posIndx)
+                cards.push(cardInCont);
+        }, this);
+
+        return cards;
     }
 
     /**
@@ -204,8 +238,8 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
             // Handling the card's positioning in the hand
             if(card == null || card.isPointerDragging) return;
 
-            let x = Phaser.Math.Linear(card.getCenterPosition().x, this.getHandIndxGlobalPosition(posIndx).x, 0.2);
-            let y = Phaser.Math.Linear(card.getCenterPosition().y, this.getHandIndxGlobalPosition(posIndx).y, 0.2);
+            let x = Phaser.Math.Linear(card.getCenterPosition().x, this.getConatinerIndxGlobalPosition(posIndx).x, 0.2);
+            let y = Phaser.Math.Linear(card.getCenterPosition().y, this.getConatinerIndxGlobalPosition(posIndx).y, 0.2);
             
             card.setCenterPosition(new Phaser.Math.Vector2(x, y));
         }, this);
