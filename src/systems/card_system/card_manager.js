@@ -2,6 +2,11 @@ import { PlayableCard } from "./playable_card.js";
 import { Card } from "./card.js";
 import { CardConatinerArea } from "./card_container_area.js";
 import { CardHandArea } from "./card_hand_area.js";
+import { TableManaCard } from "./table_mana_card.js";
+
+import { ParallelAnimNode } from "../animation_system/parallel_anim_node.js";
+import { ActionAnimNode } from "../animation_system/action_anim_node.js";
+import { TweenAnimNode } from "../animation_system/tween_anim_node.js";
 
 export class CardManager
 {
@@ -21,17 +26,63 @@ export class CardManager
      */
     cardHand;
 
-    constructor(scene, cardHand)
+    /**
+     * @type {CardConatinerArea}
+     */
+    manaCardArea;
+
+    dropAnim;
+
+    constructor(scene, cardHand, manaCardArea)
     {
         console.assert(scene instanceof Phaser.Scene, "Error: scene must be a Phaser.Scene");
         console.assert(cardHand instanceof CardHandArea, "Error: cardHand must be a CardHandArea");
 
         this.scene = scene;
         this.cardHand = cardHand;
+        this.manaCardArea = manaCardArea;
         this.cards = new Array();
     }
 
-    handleCardDrag()
+    _dropCardIntoManaArea(card)
+    {
+        let cardX = card.x;
+        let cardY = card.y;
+        let manaCard = null;
+
+        let newDropAnim = new ParallelAnimNode();
+
+        let cardChange = new ActionAnimNode();
+        cardChange.action = () => {
+            this.destroyCard(card);
+        };
+
+        let createManaCard = new ActionAnimNode();
+        createManaCard.action = () => {
+            manaCard = new TableManaCard(this.scene, cardX, cardY);
+            this.scene.add.existing(manaCard)
+            this.addExisting(manaCard);
+        }
+
+        let addCard = new ActionAnimNode();
+        addCard.action = () => {
+            this.manaCardArea.includeCard(manaCard);
+        };
+
+        cardChange.nextNode = createManaCard;
+        createManaCard.nextNode = addCard;
+
+        createManaCard.prevNode = cardChange;
+        addCard.prevNode = createManaCard;
+
+        newDropAnim.addBranchNode(cardChange);
+        newDropAnim.setNaturalDuration();
+        newDropAnim.initFowardPlay();
+
+        this.dropAnim = newDropAnim;
+    }
+
+    _handleCardDrag()
     {
         this.cards.forEach(function(card) {
             if(!card.isPointerDragging) return;
@@ -45,6 +96,7 @@ export class CardManager
             }
             else {
                 this.cardHand.quitCard(card);
+                this._dropCardIntoManaArea(card);
             }
         }, this);
     }
@@ -89,6 +141,9 @@ export class CardManager
 
     update(dt)
     {
-        this.handleCardDrag();
+        this._handleCardDrag();
+        
+        if(this.dropAnim)
+            this.dropAnim.update(dt);
     }
 }

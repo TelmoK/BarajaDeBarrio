@@ -30,7 +30,7 @@ export class PlayableCard extends Card
         this.setInteractive({ 
             hitArea: new Phaser.Geom.Rectangle(0, 0, this.cardBaseImage.width, this.cardBaseImage.height),
             hitAreaCallback: Phaser.Geom.Rectangle.Contains,
-            draggable: true 
+            draggable: true
         });
 
 

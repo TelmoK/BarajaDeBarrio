@@ -18,6 +18,11 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
      */
     arcFactor;
 
+    /**
+     * @type {number}
+     */
+    originX;
+
     constructor(scene, x, y)
     {
         console.assert(scene instanceof Phaser.Scene, "Error: scene must be a Phaser.Scene");
@@ -29,6 +34,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         this.cardPositioning = new Map();
         this.cardSpacingFactor = 0.05;
         this.arcFactor = 1;
+        this.originX = 0.5;
     }
 
     /**
@@ -178,7 +184,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         let cardHandTotalWidth = this.cardPositioning.size * cardWidth * (1 + this.cardSpacingFactor);
         
         let cardChunkWidth = cardHandTotalWidth / this.cardPositioning.size;
-        let cardHandLeftBorderX = this.x - cardHandTotalWidth / 2;
+        let cardHandLeftBorderX = this.x - cardHandTotalWidth * this.originX;
 
         return new Phaser.Math.Vector2(cardHandLeftBorderX + cardChunkWidth / 2 + cardChunkWidth * indx, this.y);
     }

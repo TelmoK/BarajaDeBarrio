@@ -36,14 +36,27 @@ export default class PreloadScene extends Phaser.Scene {
     create(data) {
        /* this.scene.start(KEYS_SCENES.MAIN_MENU);
         this.scene.stop();*/
-        this.cardHand = new CardHandArea(this, 640, 600);
-        this.add.existing(this.cardHand);
 
-        this.cardManager = new CardManager(this, this.cardHand);
-        this.add.existing(this.cardManager);
+        this.manaCardArea = new CardConatinerArea(this, 10, 500);
+        this.manaCardArea.originX = 0;
+        this.add.existing(this.manaCardArea);
 
         let tableManaCard = new TableManaCard(this, 200, 400);
         this.add.existing(tableManaCard);
+        
+        let tableManaCard2 = new TableManaCard(this, 200, 400);
+        this.add.existing(tableManaCard2);
+
+        this.manaCardArea.includeCard(tableManaCard);
+        this.manaCardArea.includeCard(tableManaCard2);
+
+        // ---
+
+        this.cardHand = new CardHandArea(this, 640, 670);
+        this.add.existing(this.cardHand);
+
+        this.cardManager = new CardManager(this, this.cardHand, this.manaCardArea);
+        this.add.existing(this.cardManager);
 
         let card = this.cardManager.instanceCard(0, 0);
         let card2 = this.cardManager.instanceCard(300, 0);
@@ -53,48 +66,6 @@ export default class PreloadScene extends Phaser.Scene {
         this.cardHand.includeCard(card2);
         this.cardHand.includeCard(card3);
 
-        // ----
-
-        this.nodeAnimation = new ParallelAnimNode();
-
-        let img = this.add.image(0, 0, SPRITES_ASSET_KEYS.TEST_CARD);
-        img.setOrigin(0,0);
-
-        let act1 =  new TweenAnimNode(this);
-        act1.tween({
-            targets: img,      // El objeto o array de objetos a animar
-            x: 600,                 // Propiedad final (se moverá a x=500)
-            duration: 2000,
-            callbackScope: this
-        });
-
-        let act2 =  new ActionAnimNode();
-        act2.action = function() {console.log("B")};
-        
-        let act3 =  new ActionAnimNode();
-        act3.action = function() {console.log("C")};
-        act3.reverseAction = function() {console.log("cccc")}
-
-        let act4 =  new ActionAnimNode();
-        act4.action = function() {console.log("D")};
-
-        let del1 = new DelayAnimNode(3);
-        let del2 = new DelayAnimNode(3);
-        let del3 = new DelayAnimNode(3);
-
-        act1.nextNode = del1;
-        del1.nextNode = act2;  del1.prevNode = act1;
-        act2.nextNode = del2;  act2.prevNode = del1;
-        del2.nextNode = act3;  del2.prevNode = act2;
-        act3.nextNode = del3;  act3.prevNode = del2;
-        del3.nextNode = act4;  del3.prevNode = act3;
-                               act4.prevNode = del3;
-
-        this.nodeAnimation.addBranchNode(act1);
-        this.nodeAnimation.setNaturalDuration(); console.log(this.nodeAnimation.duration);
-        this.nodeAnimation.initFowardPlay();
-
-        this.sign = false;
     }
 
     update(t, dt_ms) 
@@ -102,10 +73,8 @@ export default class PreloadScene extends Phaser.Scene {
         let dt = dt_ms / 1000; // Converting the delta time into seconds as many game engines do
 
         this.cardHand.update(dt);
-        this.cardManager.update(dt);
+        this.manaCardArea.update(dt);
 
-        if(this.nodeAnimation.currentTime > 9) this.sign = true;
-        if(this.sign) dt *= -1;
-        this.nodeAnimation.update(dt);
+        this.cardManager.update(dt);
     }
 }

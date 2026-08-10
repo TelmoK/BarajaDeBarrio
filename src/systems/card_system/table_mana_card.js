@@ -37,6 +37,37 @@ export class TableManaCard extends Card
         });
         this.add(this.cardCountText);
 
-        this.setScale(0.6, 0.6);
+        this.setScale(0.5, 0.5);
+
+        // To use the width and height properties
+        this.setSize(this.getBounds().width, this.getBounds().height);
+    }
+
+     /**
+     * Returns a Vector2 with the position of the center of the card, as its orogin is in the top 
+     * left corner
+     * @override
+     * @returns {Phaser.Math.Vector2}
+     */
+    getCenterPosition()
+    {
+        return new Phaser.Math.Vector2(this.x + this.width / 2, this.y + this.height / 2);
+    }
+
+    /**
+     *@override
+     * @param {Phase.Math.Vector2} pos
+     */
+    setCenterPosition(pos)
+    {
+        console.assert(pos instanceof Phaser.Math.Vector2, "Error: pos must be an instance of Phaser.Math.Vector2");
+
+        this.x = pos.x - this.width / 2;
+        this.y = pos.y - this.height / 2;
+    }
+
+    widthInContainer()
+    {
+        return this.width;
     }
 }
