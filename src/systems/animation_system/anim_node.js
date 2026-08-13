@@ -52,6 +52,9 @@ export class AnimNode
     {
         this._hasPlayedAnimation = false;
         this.currentTime = 0;
+
+        if(this.nextNode)
+            this.nextNode.initFowardPlay();
     }
 
     /**

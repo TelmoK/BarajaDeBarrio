@@ -27,14 +27,18 @@ export class ParallelAnimNode extends AnimNode
      */
     addBranchNode(animNode)
     {
-        this.nodeBranches.push({
+        let nodeBranch = {
             headNode: animNode,
             currentExecutedNodes: new Array(),
             paddingDelayAnimNode: new DelayAnimNode(-1),
             branchDuration: animNode.duration
-        });
+        };
+
+        this.nodeBranches.push(nodeBranch);
 
         this.adjustFinalDelayPadding();
+
+        return nodeBranch;
     }
 
     /**
