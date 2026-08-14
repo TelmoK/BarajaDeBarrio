@@ -38,5 +38,6 @@ export class Card extends Phaser.GameObjects.Container
     widthInContainer()
     {
         console.assert(false, "abstract method 'widthInContainer' must be implemented");
+        return 0;
     }
 }

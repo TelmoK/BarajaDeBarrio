@@ -159,7 +159,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         let cardHandTotalWidth = this.cardPositioning.size * cardWidth * (1 + this.cardSpacingFactor);
         
         let cardChunkWidth = cardHandTotalWidth / this.cardPositioning.size;
-        let cardHandLeftBorderX = this.x - cardHandTotalWidth / 2;
+        let cardHandLeftBorderX = this.x - cardHandTotalWidth * this.originX;
 
         let indxInHand = Math.floor((pos.x - cardHandLeftBorderX) / cardChunkWidth);
 

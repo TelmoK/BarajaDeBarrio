@@ -46,9 +46,14 @@ export default class PreloadScene extends Phaser.Scene {
         
         let tableManaCard2 = new TableManaCard(this, 200, 400);
         this.add.existing(tableManaCard2);
+        
+        let tableManaCard3 = new TableManaCard(this, 200, 400);
+        this.add.existing(tableManaCard3);
+        this.a = tableManaCard3;
 
         this.manaCardArea.includeCard(tableManaCard);
         this.manaCardArea.includeCard(tableManaCard2);
+        this.manaCardArea.includeCard(tableManaCard3);
 
         // ---
 
@@ -76,5 +81,8 @@ export default class PreloadScene extends Phaser.Scene {
         this.manaCardArea.update(dt);
 
         this.cardManager.update(dt);
+
+        if(t > 3000)
+            this.a.angle = 45;
     }
 }

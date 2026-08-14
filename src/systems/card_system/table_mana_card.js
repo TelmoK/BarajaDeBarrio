@@ -23,11 +23,11 @@ export class TableManaCard extends Card
         super(scene, x, y);
 
         this.cardBaseImage = scene.add.image(0, 0, SPRITES_ASSET_KEYS.TEST_MANA_CARD);
-        this.cardBaseImage.setOrigin(0, 0);
         this.add(this.cardBaseImage);
 
         this.cardCountImage = scene.add.image(0, 0, SPRITES_ASSET_KEYS.TEST_CARD_COUNT_CIRCLE);
-        this.cardCountImage.x = this.cardBaseImage.width;
+        this.cardCountImage.x = this.cardBaseImage.width/2;
+        this.cardCountImage.y = -this.cardBaseImage.height/2;
         this.add(this.cardCountImage);
 
         this.cardCountText = scene.add.text(this.cardCountImage.x - 8, -15, "2", { 
@@ -51,7 +51,7 @@ export class TableManaCard extends Card
      */
     getCenterPosition()
     {
-        return new Phaser.Math.Vector2(this.x + this.width / 2, this.y + this.height / 2);
+        return new Phaser.Math.Vector2(this.x, this.y);
     }
 
     /**
@@ -62,12 +62,13 @@ export class TableManaCard extends Card
     {
         console.assert(pos instanceof Phaser.Math.Vector2, "Error: pos must be an instance of Phaser.Math.Vector2");
 
-        this.x = pos.x - this.width / 2;
-        this.y = pos.y - this.height / 2;
+        this.x = pos.x;
+        this.y = pos.y;
     }
 
     widthInContainer()
     {
-        return this.width;
+        //return this.width;
+        return this.getBounds().width;
     }
 }

@@ -24,15 +24,15 @@ export class PlayableCard extends Card
         this.isPointerDragging = false;
 
         this.cardBaseImage = scene.add.image(0, 0, SPRITES_ASSET_KEYS.TEST_CARD);
-        this.cardBaseImage.setOrigin(0, 0);
         this.add(this.cardBaseImage);
 
         this.setInteractive({ 
-            hitArea: new Phaser.Geom.Rectangle(0, 0, this.cardBaseImage.width, this.cardBaseImage.height),
+            hitArea: new Phaser.Geom.Rectangle(-this.cardBaseImage.width/2, -this.cardBaseImage.height/2, this.cardBaseImage.width, this.cardBaseImage.height),
             hitAreaCallback: Phaser.Geom.Rectangle.Contains,
             draggable: true
         });
 
+        this.setScale(0.7, 0.7);
 
         this.on(Phaser.Input.Events.DRAG, function (pointer, dragX, dragY) {
             if(!this.interactive) return;
@@ -62,7 +62,7 @@ export class PlayableCard extends Card
      */
     getCenterPosition()
     {
-        return new Phaser.Math.Vector2(this.x + this.cardBaseImage.width / 2, this.y + this.cardBaseImage.height / 2);
+        return new Phaser.Math.Vector2(this.x, this.y);
     }
 
     /**
@@ -73,12 +73,12 @@ export class PlayableCard extends Card
     {
         console.assert(pos instanceof Phaser.Math.Vector2, "Error: pos must be an instance of Phaser.Math.Vector2");
 
-        this.x = pos.x - this.cardBaseImage.width / 2;
-        this.y = pos.y - this.cardBaseImage.height / 2;
+        this.x = pos.x;
+        this.y = pos.y;
     }
 
     widthInContainer()
     {
-        return this.cardBaseImage.width;
+        return this.cardBaseImage.width * this.scaleX;
     }
 }
