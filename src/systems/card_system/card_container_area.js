@@ -147,7 +147,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
     {
         console.assert(pos instanceof Phaser.Math.Vector2, "Error: pos must be an instance of Phaser.Math.Vector2");
 
-        //let firstCard = this.cardPositioning.entries().next().key;
+    /*    //let firstCard = this.cardPositioning.entries().next().key;
         const [firstCard] = this.cardPositioning.keys();
         let cardWidth = 0;
         
@@ -163,7 +163,41 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
 
         let indxInHand = Math.floor((pos.x - cardHandLeftBorderX) / cardChunkWidth);
 
-        return Phaser.Math.Clamp(indxInHand, 0, this.cardPositioning.size - 1);
+        return Phaser.Math.Clamp(indxInHand, 0, this.cardPositioning.size - 1);*/
+        const [firstCard] = this.cardPositioning.keys();
+        let cardWidth = 0;
+        
+        if(firstCard == null) 
+            return 0;
+        
+        // Obtain the width of all the cards 
+        let cardWidths = new Array(this.cardPositioning.size);
+        let containerWidth = 0;
+
+        this.cardPositioning.forEach(function(posIndx, cardInCont) {
+            cardWidths[posIndx] = cardInCont.widthInContainer() * (1 + this.cardSpacingFactor);
+            containerWidth += cardWidths[posIndx];
+        }, this);
+
+        // 
+        let indx = 0;
+        let containerLeftLimitX = this.x - containerWidth * this.originX;
+
+        // 
+        if(pos.x >= containerLeftLimitX + containerWidth)
+            return this.cardPositioning.size - 1;
+
+        for (let i = 0; i < cardWidths.length; i++) {
+            if(pos.x >= containerLeftLimitX && pos.x < containerLeftLimitX + cardWidths[i])
+            {
+                indx = i;
+                break;
+            }
+
+            containerLeftLimitX += cardWidths[i];
+        }
+
+        return indx;
     }
 
     /**
@@ -175,7 +209,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
     {
         console.assert(typeof indx === "number", "Error: indx must be a number");
 
-        const [firstCard] = this.cardPositioning.keys();
+    /*    const [firstCard] = this.cardPositioning.keys();
         let cardWidth = 0;
         
         if(firstCard != null)
@@ -186,7 +220,33 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         let cardChunkWidth = cardHandTotalWidth / this.cardPositioning.size;
         let cardHandLeftBorderX = this.x - cardHandTotalWidth * this.originX;
 
-        return new Phaser.Math.Vector2(cardHandLeftBorderX + cardChunkWidth / 2 + cardChunkWidth * indx, this.y);
+        return new Phaser.Math.Vector2(cardHandLeftBorderX + cardChunkWidth / 2 + cardChunkWidth * indx, this.y);*/
+
+        const [firstCard] = this.cardPositioning.keys();
+        let cardWidth = 0;
+        
+        if(firstCard != null)
+            cardWidth = firstCard.widthInContainer();
+
+        // Get total width of the hand
+        let cardHandTotalWidth = 0;
+        let widthShift = 0;
+
+        this.cardPositioning.forEach(function(posIndx, card) 
+        {
+            cardHandTotalWidth += card.widthInContainer() * (1 + this.cardSpacingFactor);
+
+            if(posIndx === indx) {
+                widthShift += card.widthInContainer() * (1 + this.cardSpacingFactor) / 2;
+            }
+            else if(posIndx < indx) {
+                widthShift += card.widthInContainer() * (1 + this.cardSpacingFactor);
+            }
+        }, this);
+        
+        let cardHandLeftBorderX = this.x - cardHandTotalWidth * this.originX;
+        
+        return new Phaser.Math.Vector2(cardHandLeftBorderX + widthShift, this.y);
     }
 
     /**
@@ -240,6 +300,10 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
     {
         this.cardPositioning.forEach(function(posIndx, card) {
             if(!card) return;
+            
+           /* let mouseX = this.scene.input.activePointer.x;
+            let mouseY = this.scene.input.activePointer.y;
+            console.log(this.getClosetsContainerPositionIndx(new Phaser.Math.Vector2(mouseX, mouseY)));*/
 
             // Handling the card's positioning in the hand
             if(card == null || card.isPointerDragging) return;

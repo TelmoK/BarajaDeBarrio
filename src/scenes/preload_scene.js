@@ -82,7 +82,7 @@ export default class PreloadScene extends Phaser.Scene {
 
         this.cardManager.update(dt);
 
-        if(t > 3000)
-            this.a.angle = 45;
+        if(t > 8000)
+            this.a.angle = 20;
     }
 }
