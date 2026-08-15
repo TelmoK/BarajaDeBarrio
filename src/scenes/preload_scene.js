@@ -37,7 +37,7 @@ export default class PreloadScene extends Phaser.Scene {
        /* this.scene.start(KEYS_SCENES.MAIN_MENU);
         this.scene.stop();*/
 
-        this.manaCardArea = new CardConatinerArea(this, 10, 500);
+        this.manaCardArea = new CardConatinerArea(this, 10, 510);
         this.manaCardArea.originX = 0;
         this.add.existing(this.manaCardArea);
 
@@ -58,6 +58,7 @@ export default class PreloadScene extends Phaser.Scene {
         // ---
 
         this.cardHand = new CardHandArea(this, 640, 670);
+        this.cardHand.arcFactor = 5;
         this.add.existing(this.cardHand);
 
         this.cardManager = new CardManager(this, this.cardHand, this.manaCardArea);
@@ -66,10 +67,12 @@ export default class PreloadScene extends Phaser.Scene {
         let card = this.cardManager.instanceCard(0, 0);
         let card2 = this.cardManager.instanceCard(300, 0);
         let card3 = this.cardManager.instanceCard(600, 0);
+        let card4 = this.cardManager.instanceCard(700, 0);
 
         this.cardHand.includeCard(card);
         this.cardHand.includeCard(card2);
         this.cardHand.includeCard(card3);
+        this.cardHand.includeCard(card4);
 
     }
 

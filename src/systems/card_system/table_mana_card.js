@@ -37,7 +37,7 @@ export class TableManaCard extends Card
         });
         this.add(this.cardCountText);
 
-        this.setScale(0.5, 0.5);
+        this.setScale(0.4, 0.4);
 
         // To use the width and height properties
         this.setSize(this.getBounds().width, this.getBounds().height);

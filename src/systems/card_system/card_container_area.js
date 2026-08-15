@@ -40,7 +40,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
 
         this.cardPositioning = new Map();
         this.cardSpacingFactor = 0.05;
-        this.arcFactor = 1;
+        this.arcFactor = 0;
         this.originX = 0.5;
         this.flexible = true;
     }
@@ -229,7 +229,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
             let cardChunkWidth = cardHandTotalWidth / this.cardPositioning.size;
             let cardHandLeftBorderX = this.x - cardHandTotalWidth * this.originX;
 
-            return new Phaser.Math.Vector2(cardHandLeftBorderX + cardChunkWidth / 2 + cardChunkWidth * indx, this.y);
+            return this._getArchedPos(new Phaser.Math.Vector2(cardHandLeftBorderX + cardChunkWidth / 2 + cardChunkWidth * indx, this.y));
         }
 
         // Get total width of the hand
@@ -250,7 +250,37 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         
         let cardHandLeftBorderX = this.x - cardHandTotalWidth * this.originX;
         
-        return new Phaser.Math.Vector2(cardHandLeftBorderX + widthShift, this.y);
+        return this._getArchedPos(new Phaser.Math.Vector2(cardHandLeftBorderX + widthShift, this.y));
+    }
+
+    /**
+     * Returns an arched position of a card given a flat position in the container, used by 
+     * `getContainerIndxGlobalPosition(indx)` to apply the `arcFactor` property.
+     * @param {Phaser.Math.Vector2} pos 
+     * @returns {Phaser.Math.Vector2}
+     */
+    _getArchedPos(pos)
+    {
+        console.assert(pos instanceof Phaser.Math.Vector2, "Error: pos must be an instance of Phaser.Math.Vector2");
+
+        const [firstCard] = this.cardPositioning.keys();
+        let cardWidth = 0;
+        
+        if(firstCard == null || this.arcFactor === 0) 
+            return pos;
+
+        let centerDist = pos.x - this.x;
+
+        let angle = Phaser.Math.DegToRad(this.arcFactor);
+        let x = Math.cos(angle) * centerDist + this.x;
+        let y = Math.sin(angle * Math.sign(centerDist)) * centerDist + this.y;
+
+        return new Phaser.Math.Vector2(x, y);
+    }
+
+    _getArchedRot(pos)
+    {
+
     }
 
     /**
@@ -316,6 +346,8 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
             let y = Phaser.Math.Linear(card.getCenterPosition().y, this.getContainerIndxGlobalPosition(posIndx).y, 0.2);
             
             card.setCenterPosition(new Phaser.Math.Vector2(x, y));
+
+            //let rot = this.arcFactor * 
         }, this);
     }
 }
