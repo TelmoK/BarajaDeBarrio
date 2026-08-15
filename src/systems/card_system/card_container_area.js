@@ -23,6 +23,13 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
      */
     originX;
 
+    /**
+     * The container adapts to each contained card width at each moment when it is `true`, otherwise 
+     * the cards are distributed in a fixed grid position
+     * @type {boolean}
+     */
+    flexible;
+
     constructor(scene, x, y)
     {
         console.assert(scene instanceof Phaser.Scene, "Error: scene must be a Phaser.Scene");
@@ -35,6 +42,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         this.cardSpacingFactor = 0.05;
         this.arcFactor = 1;
         this.originX = 0.5;
+        this.flexible = true;
     }
 
     /**
@@ -147,30 +155,28 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
     {
         console.assert(pos instanceof Phaser.Math.Vector2, "Error: pos must be an instance of Phaser.Math.Vector2");
 
-    /*    //let firstCard = this.cardPositioning.entries().next().key;
+        //let firstCard = this.cardPositioning.entries().next().key;
         const [firstCard] = this.cardPositioning.keys();
         let cardWidth = 0;
         
         if(firstCard == null) 
             return 0;
 
-        cardWidth = firstCard.widthInContainer();
+        if(!this.flexible)
+        {   
+            cardWidth = firstCard.widthInContainer();
 
-        let cardHandTotalWidth = this.cardPositioning.size * cardWidth * (1 + this.cardSpacingFactor);
-        
-        let cardChunkWidth = cardHandTotalWidth / this.cardPositioning.size;
-        let cardHandLeftBorderX = this.x - cardHandTotalWidth * this.originX;
+            let cardHandTotalWidth = this.cardPositioning.size * cardWidth * (1 + this.cardSpacingFactor);
+            
+            let cardChunkWidth = cardHandTotalWidth / this.cardPositioning.size;
+            let cardHandLeftBorderX = this.x - cardHandTotalWidth * this.originX;
 
-        let indxInHand = Math.floor((pos.x - cardHandLeftBorderX) / cardChunkWidth);
+            let indxInHand = Math.floor((pos.x - cardHandLeftBorderX) / cardChunkWidth);
 
-        return Phaser.Math.Clamp(indxInHand, 0, this.cardPositioning.size - 1);*/
-        const [firstCard] = this.cardPositioning.keys();
-        let cardWidth = 0;
+            return Phaser.Math.Clamp(indxInHand, 0, this.cardPositioning.size - 1);
+        }
         
-        if(firstCard == null) 
-            return 0;
-        
-        // Obtain the width of all the cards 
+        // Obtain the width of all the cards and the total width of the container
         let cardWidths = new Array(this.cardPositioning.size);
         let containerWidth = 0;
 
@@ -179,14 +185,15 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
             containerWidth += cardWidths[posIndx];
         }, this);
 
-        // 
-        let indx = 0;
+        
+        // If the mouse is directly at the right from the container we return the last position index
         let containerLeftLimitX = this.x - containerWidth * this.originX;
 
-        // 
         if(pos.x >= containerLeftLimitX + containerWidth)
             return this.cardPositioning.size - 1;
 
+        // Checking the space where the position is by adding the different widths of the cards
+        let indx = 0;
         for (let i = 0; i < cardWidths.length; i++) {
             if(pos.x >= containerLeftLimitX && pos.x < containerLeftLimitX + cardWidths[i])
             {
@@ -209,24 +216,21 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
     {
         console.assert(typeof indx === "number", "Error: indx must be a number");
 
-    /*    const [firstCard] = this.cardPositioning.keys();
-        let cardWidth = 0;
-        
-        if(firstCard != null)
-            cardWidth = firstCard.widthInContainer();
-
-        let cardHandTotalWidth = this.cardPositioning.size * cardWidth * (1 + this.cardSpacingFactor);
-        
-        let cardChunkWidth = cardHandTotalWidth / this.cardPositioning.size;
-        let cardHandLeftBorderX = this.x - cardHandTotalWidth * this.originX;
-
-        return new Phaser.Math.Vector2(cardHandLeftBorderX + cardChunkWidth / 2 + cardChunkWidth * indx, this.y);*/
-
         const [firstCard] = this.cardPositioning.keys();
         let cardWidth = 0;
         
         if(firstCard != null)
             cardWidth = firstCard.widthInContainer();
+
+        if(!this.flexible)
+        {  
+            let cardHandTotalWidth = this.cardPositioning.size * cardWidth * (1 + this.cardSpacingFactor);
+            
+            let cardChunkWidth = cardHandTotalWidth / this.cardPositioning.size;
+            let cardHandLeftBorderX = this.x - cardHandTotalWidth * this.originX;
+
+            return new Phaser.Math.Vector2(cardHandLeftBorderX + cardChunkWidth / 2 + cardChunkWidth * indx, this.y);
+        }
 
         // Get total width of the hand
         let cardHandTotalWidth = 0;
