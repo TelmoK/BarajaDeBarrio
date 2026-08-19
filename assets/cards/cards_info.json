@@ -1,0 +1,19 @@
+{
+    "cardData": [
+        {
+            "cardType": "Character Card",
+            "name": "Matón",
+            "manaCost": "t3",
+            "imgScrKey": "bully-character.png",
+            "description": "Bullies everyone ...",
+            "hp": 5,
+            "attack": 3
+        },
+        {
+            "cardType": "Mana Card",
+            "name": "Industriales",
+            "manaTypeName": "Tabaco",
+            "imgScrKey": "cigarette-pack.png"
+        }
+    ]
+}

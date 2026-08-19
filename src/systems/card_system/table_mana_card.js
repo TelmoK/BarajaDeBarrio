@@ -18,6 +18,11 @@ export class TableManaCard extends Card
      */
     cardCountText;
 
+    /**
+     * @type {{cardType: string, name: string, manaTypeName: string, imgScrKey: string}}
+     */
+    cardInfo;
+
     constructor(scene, x, y)
     {
         super(scene, x, y);

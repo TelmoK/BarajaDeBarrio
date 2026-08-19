@@ -13,6 +13,11 @@ export class PlayableCard extends Card
      */
     isPointerDragging;
 
+    /**
+     * @type {{cardType: string, name: string, manaCost: string, imgScrKey: string, description: string, hp: number, attack: number}}
+     */
+    cardInfo;
+
     constructor(scene, x, y)
     {
         console.assert(scene instanceof Phaser.Scene, "Error: scene must be a Phaser.Scene");
