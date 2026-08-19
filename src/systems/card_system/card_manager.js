@@ -3,7 +3,9 @@ import { Card } from "./card.js";
 import { CardConatinerArea } from "./card_container_area.js";
 import { CardHandArea } from "./card_hand_area.js";
 import { TableManaCard } from "./table_mana_card.js";
+import { TableCharacterCard } from "./table_character_card.js";
 
+import { NodeAnimation } from "../animation_system/node_animation.js";
 import { ParallelAnimNode } from "../animation_system/parallel_anim_node.js";
 import { ActionAnimNode } from "../animation_system/action_anim_node.js";
 import { TweenAnimNode } from "../animation_system/tween_anim_node.js";
@@ -31,9 +33,17 @@ export class CardManager
      */
     manaCardArea;
 
-    dropAnim;
+    /**
+     * @type {CardConatinerArea}
+     */
+    actionCardArea;
 
-    constructor(scene, cardHand, manaCardArea)
+    /**
+     * @type {NodeAnimation}
+     */
+    cardDropAnim;
+
+    constructor(scene, cardHand, manaCardArea, actionCardArea)
     {
         console.assert(scene instanceof Phaser.Scene, "Error: scene must be a Phaser.Scene");
         console.assert(cardHand instanceof CardHandArea, "Error: cardHand must be a CardHandArea");
@@ -41,45 +51,56 @@ export class CardManager
         this.scene = scene;
         this.cardHand = cardHand;
         this.manaCardArea = manaCardArea;
+        this.actionCardArea = actionCardArea;
         this.cards = new Array();
     }
 
+    /**
+     * 
+     * @param {Card} card 
+     */
     _dropCardIntoManaArea(card)
     {
         let cardX = card.x;
         let cardY = card.y;
-        let manaCard = null;
+        let tableCard = null;
 
-        let newDropAnim = new ParallelAnimNode();
-
-        let cardChange = new ActionAnimNode();
-        cardChange.action = () => {
+        let destroyPlayableCard = new ActionAnimNode();
+        destroyPlayableCard.action = () => {
             this.destroyCard(card);
         };
 
-        let createManaCard = new ActionAnimNode();
-        createManaCard.action = () => {
-            manaCard = new TableManaCard(this.scene, cardX, cardY);
-            this.scene.add.existing(manaCard)
-            this.addExisting(manaCard);
+        let createTableCard = new ActionAnimNode();
+        let addTableCard = new ActionAnimNode();
+
+        if(card.cardInfo.cardType === "Mana Card") {
+            createTableCard.action = () => {
+                tableCard = new TableManaCard(this.scene, cardX, cardY);
+                this.scene.add.existing(tableCard)
+                this.addExisting(tableCard);
+            }
+            addTableCard.action = () => {
+                this.manaCardArea.includeCard(tableCard);
+            };
+        }
+        else {
+            createTableCard.action = () => {
+                tableCard = new TableCharacterCard(this.scene, cardX, cardY);
+                this.scene.add.existing(tableCard)
+                this.addExisting(tableCard);
+            }
+            addTableCard.action = () => {
+                this.actionCardArea.includeCard(tableCard);
+            };
         }
 
-        let addCard = new ActionAnimNode();
-        addCard.action = () => {
-            this.manaCardArea.includeCard(manaCard);
-        };
+        
 
-        cardChange.nextNode = createManaCard;
-        createManaCard.nextNode = addCard;
-
-        createManaCard.prevNode = cardChange;
-        addCard.prevNode = createManaCard;
-
-        newDropAnim.addBranchNode(cardChange);
-        newDropAnim.setNaturalDuration();
-        newDropAnim.initFowardPlay();
-
-        this.dropAnim = newDropAnim;
+        this.cardDropAnim = new NodeAnimation();
+        this.cardDropAnim.pushBackAnimNode(destroyPlayableCard);
+        this.cardDropAnim.pushBackAnimNode(createTableCard);
+        this.cardDropAnim.pushBackAnimNode(addTableCard);
+        this.cardDropAnim.play();
     }
 
     _handleCardDrag()
@@ -143,7 +164,7 @@ export class CardManager
     {
         this._handleCardDrag();
         
-        if(this.dropAnim)
-            this.dropAnim.update(dt);
+        if(this.cardDropAnim)
+            this.cardDropAnim.update(dt);
     }
 }

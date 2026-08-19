@@ -5,6 +5,11 @@ export class Card extends Phaser.GameObjects.Container
      */
     interactive;
 
+    /**
+     * @type {{cardType: string, name: string, manaCost: string, imgScrKey: string, description: string, hp: number, attack: number} | {cardType: string, name: string, manaTypeName: string, imgScrKey: string}}
+     */
+    cardInfo;
+
     constructor(scene, x, y)
     {
         console.assert(scene instanceof Phaser.Scene, "Error: scene must be a Phaser.Scene");

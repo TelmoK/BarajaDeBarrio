@@ -84,6 +84,10 @@ export class NodeAnimation
         animNode.prevNode = listedNode.prevNode;
 
         listedNode.prevNode = animNode;
+
+        // If the node was inserted in the first position we must update the animation branch first node
+        if(listedNode === this.mainAnimNode.nodeBranches[0].headNode)
+            this.mainAnimNode.nodeBranches[0].headNode = animNode;
     }
 
     /**
@@ -130,7 +134,7 @@ export class NodeAnimation
 
     update(dt)
     {
-        if(this.paused) {
+        if(!this.paused) {
             this.mainAnimNode.update(dt);
         }
     }
