@@ -20,29 +20,4 @@ export class Card extends Phaser.GameObjects.Container
 
         this.interactive = true;
     }
-
-    /**
-     * Returns a Vector2 with the position of the center of the card, as its orogin is in the top 
-     * left corner
-     * @returns {Phaser.Math.Vector2}
-     */
-    getCenterPosition()
-    {
-        console.assert(false, "abstract method 'getCenterPosition' must be implemented");
-    }
-
-    /**
-     *
-     * @param {Phase.Math.Vector2} pos
-     */
-    setCenterPosition(pos)
-    {
-        console.assert(false, "abstract method 'setCenterPosition' must be implemented");
-    }
-
-    widthInContainer()
-    {
-        console.assert(false, "abstract method 'widthInContainer' must be implemented");
-        return 0;
-    }
 }

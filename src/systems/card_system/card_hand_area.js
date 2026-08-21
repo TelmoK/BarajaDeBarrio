@@ -34,7 +34,7 @@ export class CardHandArea extends CardConatinerArea
             return;
         }
 
-        let cardWidth = firstCard.widthInContainer();
+        let cardWidth = firstCard.getBounds().width;
 
         let cardHandTotalWidth = this.cardPositioning.size * cardWidth * (1 + this.cardSpacingFactor) * 1.05;
 
@@ -89,7 +89,7 @@ export class CardHandArea extends CardConatinerArea
             // Handling the switch movement of the dragged card in the hand
             if(card.isPointerDragging) 
             {
-                let cardNewPosIndx = this.getClosetsContainerPositionIndx(card.getCenterPosition());
+                let cardNewPosIndx = this.getClosetsContainerPositionIndx(new Phaser.Math.Vector2(card.x, card.y));
                 this.moveCardTo(card, cardNewPosIndx);
             }
             
@@ -100,10 +100,11 @@ export class CardHandArea extends CardConatinerArea
             // Handling the card's positioning in the hand
             if(card == null || card.isPointerDragging) return;
 
-            let x = Phaser.Math.Linear(card.getCenterPosition().x, this.getContainerIndxGlobalPosition(posIndx).x, 0.2);
-            let y = Phaser.Math.Linear(card.getCenterPosition().y, this.getContainerIndxGlobalPosition(posIndx).y, 0.2);
+            let x = Phaser.Math.Linear(card.x, this.getContainerIndxGlobalPosition(posIndx).x, 0.2);
+            let y = Phaser.Math.Linear(card.y, this.getContainerIndxGlobalPosition(posIndx).y, 0.2);
             
-            card.setCenterPosition(new Phaser.Math.Vector2(x, y));
+            card.x = x;
+            card.y = y;
         }, this);
     }
 }

@@ -52,7 +52,13 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
      */
     insertCard(card, posIndx)
     {
-        console.assert(card instanceof Card, "Error: card must be an instance of Card");
+        console.assert(
+            card instanceof Phaser.GameObjects.Container ||
+            card instanceof Phaser.GameObjects.Image ||
+            card instanceof Phaser.GameObjects.Sprite,
+            "Error: card must be a Container, Image or Container" 
+        );
+        //console.assert(card instanceof Card, "Error: card must be an instance of Card");
         console.assert(typeof posIndx === "number", "Error: posIndx must be a number");
 
         if(this.cardPositioning.has(card)) 
@@ -72,12 +78,18 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
      */
     includeCard(card)
     {
-        console.assert(card instanceof Card, "Error: card must be an instance of Card");
+        console.assert(
+            card instanceof Phaser.GameObjects.Container ||
+            card instanceof Phaser.GameObjects.Image ||
+            card instanceof Phaser.GameObjects.Sprite,
+            "Error: card must be a Container, Image or Container" 
+        );
+        //console.assert(card instanceof Card, "Error: card must be an instance of Card");
 
         if(this.cardPositioning.has(card)) 
             return;
 
-        let newCardIndex = this.getClosetsContainerPositionIndx(card.getCenterPosition());
+        let newCardIndex = this.getClosetsContainerPositionIndx(new Phaser.Math.Vector2(card.x, card.y));
 
         // If the card is added to the last position by the right the insertion that pushes the past
         // last element to the right creates a flick when the hand tries to reposition the cards
@@ -113,7 +125,13 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
      */
     moveCardTo(card, posIndx)
     {
-        console.assert(card instanceof Card, "Error: card must be an instance of Card");
+        console.assert(
+            card instanceof Phaser.GameObjects.Container ||
+            card instanceof Phaser.GameObjects.Image ||
+            card instanceof Phaser.GameObjects.Sprite,
+            "Error: card must be a Container, Image or Container" 
+        );
+        //console.assert(card instanceof Card, "Error: card must be an instance of Card");
         console.assert(typeof posIndx === "number", "Error: posIndx must be a number");
         console.assert(posIndx < this.cardPositioning.size && posIndx >= 0, `Error: posIndx is out of the bounds of the card hand ${posIndx}`);
 
@@ -134,7 +152,13 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
      */
     quitCard(card)
     {
-        console.assert(card instanceof Card, "Error: card must be an instance of Card");
+        console.assert(
+            card instanceof Phaser.GameObjects.Container ||
+            card instanceof Phaser.GameObjects.Image ||
+            card instanceof Phaser.GameObjects.Sprite,
+            "Error: card must be a Container, Image or Container" 
+        );
+        //console.assert(card instanceof Card, "Error: card must be an instance of Card");
         
         let freedIndxPos = this.cardPositioning.get(card);
 
@@ -164,7 +188,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
 
         if(!this.flexible)
         {   
-            cardWidth = firstCard.widthInContainer();
+            cardWidth = firstCard.getBounds().width;;
 
             let cardHandTotalWidth = this.cardPositioning.size * cardWidth * (1 + this.cardSpacingFactor);
             
@@ -181,7 +205,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         let containerWidth = 0;
 
         this.cardPositioning.forEach(function(posIndx, cardInCont) {
-            cardWidths[posIndx] = cardInCont.widthInContainer() * (1 + this.cardSpacingFactor);
+            cardWidths[posIndx] = cardInCont.getBounds().width * (1 + this.cardSpacingFactor);
             containerWidth += cardWidths[posIndx];
         }, this);
 
@@ -220,7 +244,7 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         let cardWidth = 0;
         
         if(firstCard != null)
-            cardWidth = firstCard.widthInContainer();
+            cardWidth = firstCard.getBounds().width;
 
         if(!this.flexible)
         {  
@@ -238,13 +262,13 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
 
         this.cardPositioning.forEach(function(posIndx, card) 
         {
-            cardHandTotalWidth += card.widthInContainer() * (1 + this.cardSpacingFactor);
+            cardHandTotalWidth += card.getBounds().width * (1 + this.cardSpacingFactor);
 
             if(posIndx === indx) {
-                widthShift += card.widthInContainer() * (1 + this.cardSpacingFactor) / 2;
+                widthShift += card.getBounds().width * (1 + this.cardSpacingFactor) / 2;
             }
             else if(posIndx < indx) {
-                widthShift += card.widthInContainer() * (1 + this.cardSpacingFactor);
+                widthShift += card.getBounds().width * (1 + this.cardSpacingFactor);
             }
         }, this);
         
@@ -342,10 +366,11 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
             // Handling the card's positioning in the hand
             if(card == null || card.isPointerDragging) return;
 
-            let x = Phaser.Math.Linear(card.getCenterPosition().x, this.getContainerIndxGlobalPosition(posIndx).x, 0.2);
-            let y = Phaser.Math.Linear(card.getCenterPosition().y, this.getContainerIndxGlobalPosition(posIndx).y, 0.2);
+            let x = Phaser.Math.Linear(card.x, this.getContainerIndxGlobalPosition(posIndx).x, 0.2);
+            let y = Phaser.Math.Linear(card.y, this.getContainerIndxGlobalPosition(posIndx).y, 0.2);
             
-            card.setCenterPosition(new Phaser.Math.Vector2(x, y));
+            card.x = x;
+            card.y = y;
 
             //let rot = this.arcFactor * 
         }, this);
