@@ -1,6 +1,6 @@
 import { PlayableCard } from "./playable_card.js";
 import { Card } from "./card.js";
-import { CardConatinerArea } from "./card_container_area.js";
+import { TableElementArea } from "./card_container_area.js";
 import { CardHandArea } from "./card_hand_area.js";
 import { TableManaCard } from "./table_mana_card.js";
 import { TableCharacterCard } from "./table_character_card.js";
@@ -29,12 +29,12 @@ export class CardManager
     cardHand;
 
     /**
-     * @type {CardConatinerArea}
+     * @type {TableElementArea}
      */
     manaCardArea;
 
     /**
-     * @type {CardConatinerArea}
+     * @type {TableElementArea}
      */
     actionCardArea;
 
@@ -47,6 +47,8 @@ export class CardManager
     {
         console.assert(scene instanceof Phaser.Scene, "Error: scene must be a Phaser.Scene");
         console.assert(cardHand instanceof CardHandArea, "Error: cardHand must be a CardHandArea");
+        console.assert(manaCardArea instanceof TableElementArea, "Error: manaCardArea must be a TableElementArea");
+        console.assert(actionCardArea instanceof TableElementArea, "Error: actionCardArea must be a TableElementArea");
 
         this.scene = scene;
         this.cardHand = cardHand;
@@ -80,7 +82,7 @@ export class CardManager
                 this.addExisting(tableCard);
             }
             addTableCard.action = () => {
-                this.manaCardArea.includeCard(tableCard);
+                this.manaCardArea.includeElem(tableCard);
             };
         }
         else {
@@ -90,7 +92,7 @@ export class CardManager
                 this.addExisting(tableCard);
             }
             addTableCard.action = () => {
-                this.actionCardArea.includeCard(tableCard);
+                this.actionCardArea.includeElem(tableCard);
             };
         }
 

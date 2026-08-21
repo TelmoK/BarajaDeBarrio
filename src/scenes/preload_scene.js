@@ -1,7 +1,7 @@
 import { SPRITES_ASSET_KEYS } from "../utils/asset_keys.js";
 
 import { PlayableCard } from "../systems/card_system/playable_card.js";
-import { CardConatinerArea } from "../systems/card_system/card_container_area.js";
+import { TableElementArea } from "../systems/card_system/card_container_area.js";
 import { CardHandArea } from "../systems/card_system/card_hand_area.js";
 import { CardManager } from "../systems/card_system/card_manager.js";
 import { TableManaCard } from "../systems/card_system/table_mana_card.js";
@@ -56,12 +56,12 @@ export default class PreloadScene extends Phaser.Scene {
 
         // ---
 
-        this.actionCardArea = new CardConatinerArea(this, 640, 370);
+        this.actionCardArea = new TableElementArea(this, 640, 370);
         this.add.existing(this.actionCardArea);
 
         // ---
 
-        this.manaCardArea = new CardConatinerArea(this, 10, 510);
+        this.manaCardArea = new TableElementArea(this, 10, 510);
         this.manaCardArea.originX = 0;
         this.add.existing(this.manaCardArea);
 
@@ -78,9 +78,9 @@ export default class PreloadScene extends Phaser.Scene {
         this.add.existing(tableManaCard3);
         this.a = tableManaCard3;
 
-        this.manaCardArea.includeCard(tableManaCard);
-        this.manaCardArea.includeCard(tableManaCard2);
-        this.manaCardArea.includeCard(tableManaCard3);
+        this.manaCardArea.includeElem(tableManaCard);
+        this.manaCardArea.includeElem(tableManaCard2);
+        this.manaCardArea.includeElem(tableManaCard3);
 
         // ---
 

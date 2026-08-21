@@ -1,17 +1,16 @@
-//import { PlayableCard } from './playable_card.js';
 import { Card } from './card.js';
 
-export class CardConatinerArea extends Phaser.GameObjects.Container
+export class TableElementArea extends Phaser.GameObjects.Container
 {
     /**
-     * @type {Map<Card, number>}
+     * @type {Map<Phaser.GameObjects.GameObject, number>}
      */
-    cardPositioning;
+    elemPositioning;
 
     /**
      * @type {number}
      */
-    cardSpacingFactor;
+    elemSpacingFactor;
 
     /**
      * @type {number}
@@ -24,8 +23,8 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
     originX;
 
     /**
-     * The container adapts to each contained card width at each moment when it is `true`, otherwise 
-     * the cards are distributed in a fixed grid position
+     * The container adapts to each contained element width at each moment when it is `true`, otherwise 
+     * the elems are distributed in a fixed grid position
      * @type {boolean}
      */
     flexible;
@@ -38,8 +37,8 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
 
         super(scene, x, y);
 
-        this.cardPositioning = new Map();
-        this.cardSpacingFactor = 0.05;
+        this.elemPositioning = new Map();
+        this.elemSpacingFactor = 0.05;
         this.arcFactor = 0;
         this.originX = 0.5;
         this.flexible = true;
@@ -47,131 +46,107 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
 
     /**
      * 
-     * @param {Card} card 
+     * @param {Phaser.GameObjects.GameObject} elem 
      * @param {number} posIndx 
      */
-    insertCard(card, posIndx)
+    insertElem(elem, posIndx)
     {
-        console.assert(
-            card instanceof Phaser.GameObjects.Container ||
-            card instanceof Phaser.GameObjects.Image ||
-            card instanceof Phaser.GameObjects.Sprite,
-            "Error: card must be a Container, Image or Container" 
-        );
-        //console.assert(card instanceof Card, "Error: card must be an instance of Card");
+        console.assert(elem instanceof Phaser.GameObjects.GameObject, "Error: elem must be a Container, Image or Container");
         console.assert(typeof posIndx === "number", "Error: posIndx must be a number");
 
-        if(this.cardPositioning.has(card)) 
+        if(this.elemPositioning.has(elem)) 
             return;
 
-        this.cardPositioning.forEach(function(value, cardInHand) {
+        this.elemPositioning.forEach(function(value, elemInHand) {
             if(value >= posIndx)
-                this.cardPositioning.set(cardInHand, value + 1);
+                this.elemPositioning.set(elemInHand, value + 1);
         }, this);
 
-        this.cardPositioning.set(card, posIndx);
+        this.elemPositioning.set(elem, posIndx);
     }
 
     /**
      * 
-     * @param {Card} card 
+     * @param {Phaser.GameObjects.GameObject} elem 
      */
-    includeCard(card)
+    includeElem(elem)
     {
-        console.assert(
-            card instanceof Phaser.GameObjects.Container ||
-            card instanceof Phaser.GameObjects.Image ||
-            card instanceof Phaser.GameObjects.Sprite,
-            "Error: card must be a Container, Image or Container" 
-        );
-        //console.assert(card instanceof Card, "Error: card must be an instance of Card");
+        console.assert(elem instanceof Phaser.GameObjects.GameObject, "Error: elem must be a Container, Image or Container");
 
-        if(this.cardPositioning.has(card)) 
+        if(this.elemPositioning.has(elem)) 
             return;
 
-        let newCardIndex = this.getClosetsContainerPositionIndx(new Phaser.Math.Vector2(card.x, card.y));
+        let newelemIndex = this.getClosetsContainerPositionIndx(new Phaser.Math.Vector2(elem.x, elem.y));
 
-        // If the card is added to the last position by the right the insertion that pushes the past
-        // last element to the right creates a flick when the hand tries to reposition the cards
+        // If the elem is added to the last position by the right the insertion that pushes the past
+        // last element to the right creates a flick when the hand tries to reposition the elems
 
         // Solve last position flicking
-        if(newCardIndex === this.cardPositioning.size - 1)
+        if(newelemIndex === this.elemPositioning.size - 1)
         {
-            let lastCard = null;
+            let lastelem = null;
 
-            // Look for the card with the last position
-            this.cardPositioning.forEach(function(value, cardInHand) {
-                if(value === this.cardPositioning.size - 1) {
-                    lastCard = cardInHand;
+            // Look for the elem with the last position
+            this.elemPositioning.forEach(function(value, elemInHand) {
+                if(value === this.elemPositioning.size - 1) {
+                    lastelem = elemInHand;
                     return;
                 }
             }, this);
 
-            // Just add the card at the end by directly assigning the new last index to the card
-            if(lastCard && lastCard.x < card.x) {
-                this.cardPositioning.set(card, this.cardPositioning.size);
+            // Just add the elem at the end by directly assigning the new last index to the elem
+            if(lastelem && lastelem.x < elem.x) {
+                this.elemPositioning.set(elem, this.elemPositioning.size);
                 return;
             }
         }
         
         // Otherwise do normal insertion        
-        this.insertCard(card, newCardIndex);
+        this.insertElem(elem, newelemIndex);
     }
 
     /**
      * 
-     * @param {Card} card 
+     * @param {Phaser.GameObjects.GameObject} elem 
      * @param {number} posIndx 
      */
-    moveCardTo(card, posIndx)
+    moveElemTo(elem, posIndx)
     {
-        console.assert(
-            card instanceof Phaser.GameObjects.Container ||
-            card instanceof Phaser.GameObjects.Image ||
-            card instanceof Phaser.GameObjects.Sprite,
-            "Error: card must be a Container, Image or Container" 
-        );
-        //console.assert(card instanceof Card, "Error: card must be an instance of Card");
+        console.assert(elem instanceof Phaser.GameObjects.GameObject, "Error: elem must be a Container, Image or Container");
         console.assert(typeof posIndx === "number", "Error: posIndx must be a number");
-        console.assert(posIndx < this.cardPositioning.size && posIndx >= 0, `Error: posIndx is out of the bounds of the card hand ${posIndx}`);
+        console.assert(posIndx < this.elemPositioning.size && posIndx >= 0, `Error: posIndx is out of the bounds of the elem hand ${posIndx}`);
 
-        for(let [cardInHand, value] of this.cardPositioning) {
+        for(let [elemInHand, value] of this.elemPositioning) {
             if(value === posIndx) {
-                let switchedCardPos = this.cardPositioning.get(card);
-                this.cardPositioning.set(cardInHand, switchedCardPos);
+                let switchedelemPos = this.elemPositioning.get(elem);
+                this.elemPositioning.set(elemInHand, switchedelemPos);
                 break;
             }
         }
 
-        this.cardPositioning.set(card, posIndx);
+        this.elemPositioning.set(elem, posIndx);
     }
 
     /**
      * 
-     * @param {Card} card 
+     * @param {Phaser.GameObjects.GameObject} elem 
      */
-    quitCard(card)
+    quitElem(elem)
     {
-        console.assert(
-            card instanceof Phaser.GameObjects.Container ||
-            card instanceof Phaser.GameObjects.Image ||
-            card instanceof Phaser.GameObjects.Sprite,
-            "Error: card must be a Container, Image or Container" 
-        );
-        //console.assert(card instanceof Card, "Error: card must be an instance of Card");
+        console.assert(elem instanceof Phaser.GameObjects.GameObject, "Error: elem must be a Container, Image or Container");
         
-        let freedIndxPos = this.cardPositioning.get(card);
+        let freedIndxPos = this.elemPositioning.get(elem);
 
-        this.cardPositioning.forEach(function(value, cardInHand) {
+        this.elemPositioning.forEach(function(value, elemInHand) {
             if(value > freedIndxPos)
-                this.cardPositioning.set(cardInHand, value - 1);
+                this.elemPositioning.set(elemInHand, value - 1);
         }, this);
 
-        this.cardPositioning.delete(card);
+        this.elemPositioning.delete(elem);
     }
 
     /**
-     * Returns the index of the closest Card contained in the card hand
+     * Returns the index of the closest elem contained in the elem hand
      * @param {Phaser.Math.Vector2} pos 
      * @returns {number}
      */
@@ -179,34 +154,33 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
     {
         console.assert(pos instanceof Phaser.Math.Vector2, "Error: pos must be an instance of Phaser.Math.Vector2");
 
-        //let firstCard = this.cardPositioning.entries().next().key;
-        const [firstCard] = this.cardPositioning.keys();
-        let cardWidth = 0;
+        const [firstElem] = this.elemPositioning.keys();
+        let elemWidth = 0;
         
-        if(firstCard == null) 
+        if(firstElem == null) 
             return 0;
 
         if(!this.flexible)
         {   
-            cardWidth = firstCard.getBounds().width;;
+            elemWidth = firstElem.getBounds().width;;
 
-            let cardHandTotalWidth = this.cardPositioning.size * cardWidth * (1 + this.cardSpacingFactor);
+            let elemHandTotalWidth = this.elemPositioning.size * elemWidth * (1 + this.elemSpacingFactor);
             
-            let cardChunkWidth = cardHandTotalWidth / this.cardPositioning.size;
-            let cardHandLeftBorderX = this.x - cardHandTotalWidth * this.originX;
+            let elemChunkWidth = elemHandTotalWidth / this.elemPositioning.size;
+            let elemHandLeftBorderX = this.x - elemHandTotalWidth * this.originX;
 
-            let indxInHand = Math.floor((pos.x - cardHandLeftBorderX) / cardChunkWidth);
+            let indxInHand = Math.floor((pos.x - elemHandLeftBorderX) / elemChunkWidth);
 
-            return Phaser.Math.Clamp(indxInHand, 0, this.cardPositioning.size - 1);
+            return Phaser.Math.Clamp(indxInHand, 0, this.elemPositioning.size - 1);
         }
         
-        // Obtain the width of all the cards and the total width of the container
-        let cardWidths = new Array(this.cardPositioning.size);
+        // Obtain the width of all the elems and the total width of the container
+        let elemWidths = new Array(this.elemPositioning.size);
         let containerWidth = 0;
 
-        this.cardPositioning.forEach(function(posIndx, cardInCont) {
-            cardWidths[posIndx] = cardInCont.getBounds().width * (1 + this.cardSpacingFactor);
-            containerWidth += cardWidths[posIndx];
+        this.elemPositioning.forEach(function(posIndx, elemInCont) {
+            elemWidths[posIndx] = elemInCont.getBounds().width * (1 + this.elemSpacingFactor);
+            containerWidth += elemWidths[posIndx];
         }, this);
 
         
@@ -214,25 +188,25 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
         let containerLeftLimitX = this.x - containerWidth * this.originX;
 
         if(pos.x >= containerLeftLimitX + containerWidth)
-            return this.cardPositioning.size - 1;
+            return this.elemPositioning.size - 1;
 
-        // Checking the space where the position is by adding the different widths of the cards
+        // Checking the space where the position is by adding the different widths of the elems
         let indx = 0;
-        for (let i = 0; i < cardWidths.length; i++) {
-            if(pos.x >= containerLeftLimitX && pos.x < containerLeftLimitX + cardWidths[i])
+        for (let i = 0; i < elemWidths.length; i++) {
+            if(pos.x >= containerLeftLimitX && pos.x < containerLeftLimitX + elemWidths[i])
             {
                 indx = i;
                 break;
             }
 
-            containerLeftLimitX += cardWidths[i];
+            containerLeftLimitX += elemWidths[i];
         }
 
         return indx;
     }
 
     /**
-     * Returns the position in the world of the center of a card of the hand in that position 
+     * Returns the position in the world of the center of a elem of the hand in that position 
      * @param {number} indx 
      * @returns {Phaser.Math.Vector2}
      */
@@ -240,45 +214,45 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
     {
         console.assert(typeof indx === "number", "Error: indx must be a number");
 
-        const [firstCard] = this.cardPositioning.keys();
-        let cardWidth = 0;
+        const [firstElem] = this.elemPositioning.keys();
+        let elemWidth = 0;
         
-        if(firstCard != null)
-            cardWidth = firstCard.getBounds().width;
+        if(firstElem != null)
+            elemWidth = firstElem.getBounds().width;
 
         if(!this.flexible)
         {  
-            let cardHandTotalWidth = this.cardPositioning.size * cardWidth * (1 + this.cardSpacingFactor);
+            let elemHandTotalWidth = this.elemPositioning.size * elemWidth * (1 + this.elemSpacingFactor);
             
-            let cardChunkWidth = cardHandTotalWidth / this.cardPositioning.size;
-            let cardHandLeftBorderX = this.x - cardHandTotalWidth * this.originX;
+            let elemChunkWidth = elemHandTotalWidth / this.elemPositioning.size;
+            let elemHandLeftBorderX = this.x - elemHandTotalWidth * this.originX;
 
-            return this._getArchedPos(new Phaser.Math.Vector2(cardHandLeftBorderX + cardChunkWidth / 2 + cardChunkWidth * indx, this.y));
+            return this._getArchedPos(new Phaser.Math.Vector2(elemHandLeftBorderX + elemChunkWidth / 2 + elemChunkWidth * indx, this.y));
         }
 
         // Get total width of the hand
-        let cardHandTotalWidth = 0;
+        let elemHandTotalWidth = 0;
         let widthShift = 0;
 
-        this.cardPositioning.forEach(function(posIndx, card) 
+        this.elemPositioning.forEach(function(posIndx, elem) 
         {
-            cardHandTotalWidth += card.getBounds().width * (1 + this.cardSpacingFactor);
+            elemHandTotalWidth += elem.getBounds().width * (1 + this.elemSpacingFactor);
 
             if(posIndx === indx) {
-                widthShift += card.getBounds().width * (1 + this.cardSpacingFactor) / 2;
+                widthShift += elem.getBounds().width * (1 + this.elemSpacingFactor) / 2;
             }
             else if(posIndx < indx) {
-                widthShift += card.getBounds().width * (1 + this.cardSpacingFactor);
+                widthShift += elem.getBounds().width * (1 + this.elemSpacingFactor);
             }
         }, this);
         
-        let cardHandLeftBorderX = this.x - cardHandTotalWidth * this.originX;
+        let elemHandLeftBorderX = this.x - elemHandTotalWidth * this.originX;
         
-        return this._getArchedPos(new Phaser.Math.Vector2(cardHandLeftBorderX + widthShift, this.y));
+        return this._getArchedPos(new Phaser.Math.Vector2(elemHandLeftBorderX + widthShift, this.y));
     }
 
     /**
-     * Returns an arched position of a card given a flat position in the container, used by 
+     * Returns an arched position of a elem given a flat position in the container, used by 
      * `getContainerIndxGlobalPosition(indx)` to apply the `arcFactor` property.
      * @param {Phaser.Math.Vector2} pos 
      * @returns {Phaser.Math.Vector2}
@@ -287,10 +261,10 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
     {
         console.assert(pos instanceof Phaser.Math.Vector2, "Error: pos must be an instance of Phaser.Math.Vector2");
 
-        const [firstCard] = this.cardPositioning.keys();
-        let cardWidth = 0;
+        const [firstElem] = this.elemPositioning.keys();
+        let elemWidth = 0;
         
-        if(firstCard == null || this.arcFactor === 0) 
+        if(firstElem == null || this.arcFactor === 0) 
             return pos;
 
         let centerDist = pos.x - this.x;
@@ -309,68 +283,70 @@ export class CardConatinerArea extends Phaser.GameObjects.Container
 
     /**
      * 
-     * @param {Card} card 
+     * @param {Phaser.GameObjects.GameObject} elem 
      * @returns {number}
      */
-    getCardIndx(card)
+    getelemIndx(elem)
     {
-        if(!this.cardPositioning.has(card))
+        console.assert(elem instanceof Phaser.GameObjects.GameObject, "Error: elem must be a Container, Image or Container");
+
+        if(!this.elemPositioning.has(elem))
             return -1;
 
-        return this.cardPositioning.get(card);
+        return this.elemPositioning.get(elem);
     }
 
     /**
      * 
      * @param {number} posIndx 
-     * @returns {Array<Card>}
+     * @returns {Array<elem>}
      */
-    getCardsAt(posIndx)
+    getElemsAt(posIndx)
     {
         console.assert(typeof posIndx === "number", "Error: posIndx must be a number");
 
-        let cards = new Array();
+        let elems = new Array();
 
-        this.cardPositioning.forEach(function(value, cardInCont) {
+        this.elemPositioning.forEach(function(value, elemInCont) {
             if(value === posIndx)
-                cards.push(cardInCont);
+                elems.push(elemInCont);
         }, this);
 
-        return cards;
+        return elems;
     }
 
     /**
      * 
-     * @param {Card} card 
+     * @param {Phaser.GameObjects.GameObject} elem 
      * @returns {boolean}
      */
-    conatinsCard(card)
+    conatinsElem(elem)
     {
-        console.assert(card instanceof Card, "Error: card must be an instance of Card");
+        console.assert(elem instanceof Phaser.GameObjects.GameObject, "Error: elem must be a Container, Image or Container");
 
-        return this.cardPositioning.has(card);
+        return this.elemPositioning.has(elem);
     }
 
     // TODO
-    // conatinsCardWithAttributes(attr)
+    // conatinsElemWithAttributes(attr)
 
     update(dt)
     {
-        this.cardPositioning.forEach(function(posIndx, card) {
-            if(!card) return;
+        this.elemPositioning.forEach(function(posIndx, elem) {
+            if(!elem) return;
             
            /* let mouseX = this.scene.input.activePointer.x;
             let mouseY = this.scene.input.activePointer.y;
             console.log(this.getClosetsContainerPositionIndx(new Phaser.Math.Vector2(mouseX, mouseY)));*/
 
-            // Handling the card's positioning in the hand
-            if(card == null || card.isPointerDragging) return;
+            // Handling the elem's positioning in the hand
+            if(elem == null || elem.isPointerDragging) return;
 
-            let x = Phaser.Math.Linear(card.x, this.getContainerIndxGlobalPosition(posIndx).x, 0.2);
-            let y = Phaser.Math.Linear(card.y, this.getContainerIndxGlobalPosition(posIndx).y, 0.2);
+            let x = Phaser.Math.Linear(elem.x, this.getContainerIndxGlobalPosition(posIndx).x, 0.2);
+            let y = Phaser.Math.Linear(elem.y, this.getContainerIndxGlobalPosition(posIndx).y, 0.2);
             
-            card.x = x;
-            card.y = y;
+            elem.x = x;
+            elem.y = y;
 
             //let rot = this.arcFactor * 
         }, this);

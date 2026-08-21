@@ -1,7 +1,7 @@
-import { CardConatinerArea } from "./card_container_area.js";
+import { TableElementArea } from "./card_container_area.js";
 import { PlayableCard } from "./playable_card.js";
 
-export class CardHandArea extends CardConatinerArea
+export class CardHandArea extends TableElementArea
 {
     /**
      * @type {Phaser.GameObjects.Zone}
@@ -27,7 +27,7 @@ export class CardHandArea extends CardConatinerArea
      */
     _resizeDropArea()
     {
-        const [firstCard] = this.cardPositioning.keys();
+        const [firstCard] = this.elemPositioning.keys();
         
         if(firstCard == null) {
             this.handDropArea.body.setSize(500, 160);
@@ -36,7 +36,7 @@ export class CardHandArea extends CardConatinerArea
 
         let cardWidth = firstCard.getBounds().width;
 
-        let cardHandTotalWidth = this.cardPositioning.size * cardWidth * (1 + this.cardSpacingFactor) * 1.05;
+        let cardHandTotalWidth = this.elemPositioning.size * cardWidth * (1 + this.elemSpacingFactor) * 1.05;
 
         this.handDropArea.body.setSize(cardHandTotalWidth, this.handDropArea.body.height);
     }
@@ -50,7 +50,7 @@ export class CardHandArea extends CardConatinerArea
     {
         console.assert(card instanceof PlayableCard, "Error: card must be an instance of PlayableCard");
 
-        super.insertCard(card, posIndx);
+        super.insertElem(card, posIndx);
 
         this._resizeDropArea();
     }
@@ -63,7 +63,7 @@ export class CardHandArea extends CardConatinerArea
     {
         console.assert(card instanceof PlayableCard, "Error: card must be an instance of PlayableCard");
 
-        super.includeCard(card);
+        super.includeElem(card);
 
         this._resizeDropArea();
     }
@@ -76,21 +76,21 @@ export class CardHandArea extends CardConatinerArea
     {
         console.assert(card instanceof PlayableCard, "Error: card must be an instance of PlayableCard");
 
-        super.quitCard(card);
+        super.quitElem(card);
 
         this._resizeDropArea();
     }
 
     update(dt)
     {
-        this.cardPositioning.forEach(function(posIndx, card) {
+        this.elemPositioning.forEach(function(posIndx, card) {
             if(!card) return;
 
             // Handling the switch movement of the dragged card in the hand
             if(card.isPointerDragging) 
             {
                 let cardNewPosIndx = this.getClosetsContainerPositionIndx(new Phaser.Math.Vector2(card.x, card.y));
-                this.moveCardTo(card, cardNewPosIndx);
+                this.moveElemTo(card, cardNewPosIndx);
             }
             
             //let mouseX = this.scene.input.activePointer.x;
