@@ -38,12 +38,13 @@ export default class PreloadScene extends Phaser.Scene {
     create(data) {
        /* this.scene.start(KEYS_SCENES.MAIN_MENU);
         this.scene.stop();*/
-        this.manaCoinWidget = new ManaCoinWidget(this, 50, 200);
+        this.manaCoinWidget = new ManaCoinWidget(this, 50, 460);
         this.add.existing(this.manaCoinWidget);
         this.manaCoinWidget.addManaCoin();
         this.manaCoinWidget.addManaCoin();
         this.manaCoinWidget.addManaCoin();
         this.manaCoinWidget.addManaCoin();
+        this.manaCoinWidget.removeManaCoin();
 
         let actionCardInfo = {
             cardType: "Character Card",
@@ -69,34 +70,11 @@ export default class PreloadScene extends Phaser.Scene {
 
         // ---
 
-        this.manaCardArea = new TableElementArea(this, 10, 510);
-        this.manaCardArea.originX = 0;
-        this.add.existing(this.manaCardArea);
-
-        let tableManaCard = new TableManaCard(this, 200, 400);
-        tableManaCard.cardInfo = manaCardInfo;
-        this.add.existing(tableManaCard);
-        
-        let tableManaCard2 = new TableManaCard(this, 200, 400);
-        tableManaCard2.cardInfo = manaCardInfo;
-        this.add.existing(tableManaCard2);
-        
-        let tableManaCard3 = new TableManaCard(this, 200, 400);
-        tableManaCard3.cardInfo = manaCardInfo;
-        this.add.existing(tableManaCard3);
-        this.a = tableManaCard3;
-
-        this.manaCardArea.includeElem(tableManaCard);
-        this.manaCardArea.includeElem(tableManaCard2);
-        this.manaCardArea.includeElem(tableManaCard3);
-
-        // ---
-
         this.cardHand = new CardHandArea(this, 640, 670);
         this.cardHand.arcFactor = 5;
         this.add.existing(this.cardHand);
 
-        this.cardManager = new CardManager(this, this.cardHand, this.manaCardArea, this.actionCardArea);
+        this.cardManager = new CardManager(this, this.cardHand, this.manaCoinWidget, this.actionCardArea);
         this.add.existing(this.cardManager);
 
         let card = this.cardManager.instanceCard(0, 0);
@@ -121,13 +99,9 @@ export default class PreloadScene extends Phaser.Scene {
         let dt = dt_ms / 1000; // Converting the delta time into seconds as many game engines do
 
         this.cardHand.update(dt);
-        this.manaCardArea.update(dt);
         this.actionCardArea.update(dt);
         this.manaCoinWidget.update(dt);
 
         this.cardManager.update(dt);
-
-        if(t > 8000)
-            this.a.angle = 20;
     }
 }

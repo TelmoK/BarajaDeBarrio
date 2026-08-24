@@ -5,6 +5,7 @@ import { CardHandArea } from "./card_hand_area.js";
 import { TableManaCard } from "./table_mana_card.js";
 import { TableCharacterCard } from "./table_character_card.js";
 import { ManaCoin } from "./mana_coin.js";
+import { ManaCoinWidget } from "./mana_coin_widget.js";
 
 import { NodeAnimation } from "../animation_system/node_animation.js";
 import { ParallelAnimNode } from "../animation_system/parallel_anim_node.js";
@@ -30,9 +31,9 @@ export class CardManager
     cardHand;
 
     /**
-     * @type {TableElementArea}
+     * @type {ManaCoinWidget}
      */
-    manaCardArea;
+    manaCoinWidget;
 
     /**
      * @type {TableElementArea}
@@ -44,17 +45,17 @@ export class CardManager
      */
     cardDropAnim;
 
-    constructor(scene, cardHand, manaCardArea, actionCardArea)
+    constructor(scene, cardHand, manaCoinWidget, actionCardArea)
     {
         console.assert(scene instanceof Phaser.Scene, "Error: scene must be a Phaser.Scene");
         console.assert(cardHand instanceof CardHandArea, "Error: cardHand must be a CardHandArea");
-        console.assert(manaCardArea instanceof TableElementArea, "Error: manaCardArea must be a TableElementArea");
+        console.assert(manaCoinWidget instanceof ManaCoinWidget, "Error: manaCoinWidget must be a ManaCoinWidget");
         console.assert(actionCardArea instanceof TableElementArea, "Error: actionCardArea must be a TableElementArea");
 
         this.scene = scene;
         this.cardHand = cardHand;
-        this.manaCardArea = manaCardArea;
         this.actionCardArea = actionCardArea;
+        this.manaCoinWidget = manaCoinWidget;
         this.cards = new Array();
     }
 
@@ -78,12 +79,10 @@ export class CardManager
 
         if(card.cardInfo.cardType === "Mana Card") {
             createTableCard.action = () => {
-                tableCard = new ManaCoin(this.scene, cardX, cardY);
-                this.scene.add.existing(tableCard)
-                this.addExisting(tableCard);
+                
             }
             addTableCard.action = () => {
-                this.manaCardArea.includeElem(tableCard);
+                this.manaCoinWidget.addManaCoin();
             };
         }
         else {
@@ -94,6 +93,7 @@ export class CardManager
             }
             addTableCard.action = () => {
                 this.actionCardArea.includeElem(tableCard);
+                this.manaCoinWidget.removeManaCoin();
             };
         }
 

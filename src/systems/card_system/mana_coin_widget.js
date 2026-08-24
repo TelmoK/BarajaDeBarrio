@@ -56,9 +56,9 @@ export class ManaCoinWidget extends Phaser.GameObjects.Container
         if(this.coinCount >= this. currentMaxCoins)
             return;
 
-        let manaCoin = new ManaCoin(this.scene, 0, 0);
+        let manaCoin = new ManaCoin(this.scene, this.coinArea.x - 30, this.coinArea.y);
         this.scene.add.existing(manaCoin);
-        this.coinArea.insertElem(manaCoin, 0);
+        this.coinArea.pushFrontElem(manaCoin);
 
         this.coinCount++;
         this.updateLabel();
@@ -69,7 +69,9 @@ export class ManaCoinWidget extends Phaser.GameObjects.Container
         if(this.coinCount <= 0)
             return;
 
-        // ...
+        this.coinArea.popBackElem().destroy();
+        this.coinCount--;
+        this.updateLabel();
     }
 
     updateLabel()

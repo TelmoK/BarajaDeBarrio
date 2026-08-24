@@ -66,6 +66,26 @@ export class TableElementArea extends Phaser.GameObjects.Container
     }
 
     /**
+     * @param {Phaser.GameObjects.GameObject} elem 
+     */
+    pushFrontElem(elem)
+    {
+        console.assert(elem instanceof Phaser.GameObjects.GameObject, "Error: elem must be a Container, Image or Container");
+
+        this.insertElem(elem, 0);
+    }
+
+    /**
+     * @param {Phaser.GameObjects.GameObject} elem 
+     */
+    pushBackElem(elem)
+    {
+        console.assert(elem instanceof Phaser.GameObjects.GameObject, "Error: elem must be a Container, Image or Container");
+
+        this.elemPositioning.set(elem, this.elemPositioning.size);
+    }
+
+    /**
      * 
      * @param {Phaser.GameObjects.GameObject} elem 
      */
@@ -96,7 +116,7 @@ export class TableElementArea extends Phaser.GameObjects.Container
 
             // Just add the elem at the end by directly assigning the new last index to the elem
             if(lastelem && lastelem.x < elem.x) {
-                this.elemPositioning.set(elem, this.elemPositioning.size);
+                this.pushBackElem(elem);
                 return;
             }
         }
@@ -127,6 +147,22 @@ export class TableElementArea extends Phaser.GameObjects.Container
         this.elemPositioning.set(elem, posIndx);
     }
 
+    getElemAt(posIndx)
+    {
+        console.assert(typeof posIndx === "number", "Error: posIndx must be a number");
+        
+        let elem = null;
+        
+        for(let [elemInHand, value] of this.elemPositioning) {
+            if(value === posIndx) {
+                elem = elemInHand;
+                break;
+            }
+        }
+
+        return elem;
+    }
+
     /**
      * 
      * @param {Phaser.GameObjects.GameObject} elem 
@@ -143,6 +179,28 @@ export class TableElementArea extends Phaser.GameObjects.Container
         }, this);
 
         this.elemPositioning.delete(elem);
+    }
+
+    /**
+     * @returns {Phaser.GameObjects.GameObject}
+     */
+    popBackElem()
+    {
+        let lastElem = this.getElemAt(this.elemPositioning.size - 1);
+        this.quitElem(lastElem);
+
+        return lastElem;
+    }
+    
+    /** 
+     * @returns {Phaser.GameObjects.GameObject}
+     */
+    popFrontElem()
+    {
+        let firstElem = this.getElemAt(0);
+        this.quitElem(firstElem);
+
+        return firstElem;
     }
 
     /**
