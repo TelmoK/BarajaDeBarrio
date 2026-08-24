@@ -6,6 +6,7 @@ import { CardHandArea } from "../systems/card_system/card_hand_area.js";
 import { CardManager } from "../systems/card_system/card_manager.js";
 import { TableManaCard } from "../systems/card_system/table_mana_card.js";
 import { ManaCoinWidget } from "../systems/card_system/mana_coin_widget.js";
+import { CardDeck } from "../systems/card_system/card_deck.js";
 
 import { ParallelAnimNode } from "../systems/animation_system/parallel_anim_node.js";
 import { DelayAnimNode } from "../systems/animation_system/delay_anim_node.js";
@@ -27,6 +28,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image(SPRITES_ASSET_KEYS.TEST_MANA_CARD, "assets/test/test_mana_card.png");
         this.load.image(SPRITES_ASSET_KEYS.TEST_CHARACTER_CARD, "assets/test/test_character_card.png");
         this.load.image(SPRITES_ASSET_KEYS.TEST_CARD_COUNT_CIRCLE, "assets/test/card_count_circle.png");
+        this.load.image(SPRITES_ASSET_KEYS.TEST_CARD_DECK, "assets/test/test_card_deck.png");
         /*this.load.spritesheet(KEYS_ASSETS_SPRITES.CARD_ATLAS, "assets/card/card_atlas.png", {frameWidth: 318, frameHeight: 244});
 
         this.load.image(KEYS_ASSETS_SPRITES.TURN_EXECUTION_RING_BUTTON_RELEASE, "assets/turn_ring_button/finish_turn_button_released.png");
@@ -38,6 +40,12 @@ export default class PreloadScene extends Phaser.Scene {
     create(data) {
        /* this.scene.start(KEYS_SCENES.MAIN_MENU);
         this.scene.stop();*/
+        
+        let cardDeck = new CardDeck(this, 100, 580, []);
+        this.add.existing(cardDeck);
+
+        // ---
+
         this.manaCoinWidget = new ManaCoinWidget(this, 50, 460);
         this.add.existing(this.manaCoinWidget);
         this.manaCoinWidget.addManaCoin();

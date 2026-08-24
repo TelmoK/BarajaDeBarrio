@@ -6,7 +6,7 @@ export class Card extends Phaser.GameObjects.Container
     interactive;
 
     /**
-     * @type {{cardType: string, name: string, manaCost: string, imgScrKey: string, description: string, hp: number, attack: number} | {cardType: string, name: string, manaTypeName: string, imgScrKey: string}}
+     * @type {{cardType: string, name: string, manaCost: number, imgScrKey: string, description: string, hp: number, attack: number}}
      */
     cardInfo;
 
