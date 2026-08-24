@@ -14,6 +14,12 @@ export class TableCharacterCard extends Card
      */
     // cardInfo;
 
+    /**
+     * Whether the card has been used in the current turn or not
+     * @type {boolean}
+     */
+    hasBeenUsed;
+
     constructor(scene, x, y)
     {
         super(scene, x, y);
@@ -21,9 +27,12 @@ export class TableCharacterCard extends Card
         this.cardBaseImage = scene.add.image(0, 0, SPRITES_ASSET_KEYS.TEST_CHARACTER_CARD);
         this.add(this.cardBaseImage);
 
-        this.setScale(0.7, 0.7);
 
         // To use the width and height properties
         this.setSize(this.getBounds().width, this.getBounds().height);
+
+        this.setInteractive({ draggable: true });
+
+        this.setScale(0.7, 0.7);
     }
 }

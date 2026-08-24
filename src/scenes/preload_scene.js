@@ -8,6 +8,8 @@ import { TableManaCard } from "../systems/card_system/table_mana_card.js";
 import { ManaCoinWidget } from "../systems/card_system/mana_coin_widget.js";
 import { CardDeck } from "../systems/card_system/card_deck.js";
 
+import { CombatManager } from "../systems/card_system/combat_manager.js";
+
 import { ParallelAnimNode } from "../systems/animation_system/parallel_anim_node.js";
 import { DelayAnimNode } from "../systems/animation_system/delay_anim_node.js";
 import { ActionAnimNode } from "../systems/animation_system/action_anim_node.js";
@@ -41,6 +43,11 @@ export default class PreloadScene extends Phaser.Scene {
        /* this.scene.start(KEYS_SCENES.MAIN_MENU);
         this.scene.stop();*/
         
+        this.combatManager = new CombatManager(this);
+        this.add.existing(this.combatManager);
+
+        // ---
+
         let cardDeck = new CardDeck(this, 100, 580, []);
         this.add.existing(cardDeck);
 
@@ -111,5 +118,6 @@ export default class PreloadScene extends Phaser.Scene {
         this.manaCoinWidget.update(dt);
 
         this.cardManager.update(dt);
+        this.combatManager.update(dt);
     }
 }
