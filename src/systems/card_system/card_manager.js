@@ -57,14 +57,22 @@ export class CardManager
         this.actionCardArea = actionCardArea;
         this.manaCoinWidget = manaCoinWidget;
         this.cards = new Array();
+
+        // Handle the card drop to the table when the pointer is released
+        this.scene.input.on(Phaser.Input.Events.DRAG_END, function (pointer, gameObject) {
+            if(gameObject instanceof PlayableCard) 
+                this._handleCardDrop(gameObject);
+        }, this);
     }
 
     /**
      * 
      * @param {Card} card 
      */
-    _dropCardIntoManaArea(card)
+    _dropCardInTable(card)
     {
+        console.assert(card instanceof Card, "Error: card must be an instance of PlayableCard");
+
         let cardX = card.x;
         let cardY = card.y;
         let tableCard = null;
@@ -97,13 +105,27 @@ export class CardManager
             };
         }
 
-        
-
         this.cardDropAnim = new NodeAnimation();
         this.cardDropAnim.pushBackAnimNode(destroyPlayableCard);
         this.cardDropAnim.pushBackAnimNode(createTableCard);
         this.cardDropAnim.pushBackAnimNode(addTableCard);
         this.cardDropAnim.play();
+    }
+
+    /**
+     * @param {PlayableCard} card 
+     */
+    _handleCardDrop(card)
+    {
+        console.assert(card instanceof PlayableCard, "Error: card must be an instance of PlayableCard");
+
+        const cardBounds = card.getBounds();
+        const cardHandBounds = this.cardHand.handDropArea.getBounds();
+
+        // If the card was dropped out of the card hand
+        if(!Phaser.Geom.Intersects.RectangleToRectangle(cardBounds, cardHandBounds)) {
+            this._dropCardInTable(card);
+        }
     }
 
     _handleCardDrag()
@@ -120,7 +142,6 @@ export class CardManager
             }
             else {
                 this.cardHand.quitCard(card);
-                this._dropCardIntoManaArea(card);
             }
         }, this);
     }
