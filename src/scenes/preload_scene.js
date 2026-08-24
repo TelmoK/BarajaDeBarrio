@@ -1,10 +1,11 @@
 import { SPRITES_ASSET_KEYS } from "../utils/asset_keys.js";
 
 import { PlayableCard } from "../systems/card_system/playable_card.js";
-import { TableElementArea } from "../systems/card_system/card_container_area.js";
+import { TableElementArea } from "../systems/card_system/table_element_area.js";
 import { CardHandArea } from "../systems/card_system/card_hand_area.js";
 import { CardManager } from "../systems/card_system/card_manager.js";
 import { TableManaCard } from "../systems/card_system/table_mana_card.js";
+import { ManaCoinWidget } from "../systems/card_system/mana_coin_widget.js";
 
 import { ParallelAnimNode } from "../systems/animation_system/parallel_anim_node.js";
 import { DelayAnimNode } from "../systems/animation_system/delay_anim_node.js";
@@ -37,6 +38,13 @@ export default class PreloadScene extends Phaser.Scene {
     create(data) {
        /* this.scene.start(KEYS_SCENES.MAIN_MENU);
         this.scene.stop();*/
+        this.manaCoinWidget = new ManaCoinWidget(this, 50, 200);
+        this.add.existing(this.manaCoinWidget);
+        this.manaCoinWidget.addManaCoin();
+        this.manaCoinWidget.addManaCoin();
+        this.manaCoinWidget.addManaCoin();
+        this.manaCoinWidget.addManaCoin();
+
         let actionCardInfo = {
             cardType: "Character Card",
             name: "Matón",
@@ -115,6 +123,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.cardHand.update(dt);
         this.manaCardArea.update(dt);
         this.actionCardArea.update(dt);
+        this.manaCoinWidget.update(dt);
 
         this.cardManager.update(dt);
 

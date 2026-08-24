@@ -1,9 +1,10 @@
 import { PlayableCard } from "./playable_card.js";
 import { Card } from "./card.js";
-import { TableElementArea } from "./card_container_area.js";
+import { TableElementArea } from "./table_element_area.js";
 import { CardHandArea } from "./card_hand_area.js";
 import { TableManaCard } from "./table_mana_card.js";
 import { TableCharacterCard } from "./table_character_card.js";
+import { ManaCoin } from "./mana_coin.js";
 
 import { NodeAnimation } from "../animation_system/node_animation.js";
 import { ParallelAnimNode } from "../animation_system/parallel_anim_node.js";
@@ -77,7 +78,7 @@ export class CardManager
 
         if(card.cardInfo.cardType === "Mana Card") {
             createTableCard.action = () => {
-                tableCard = new TableManaCard(this.scene, cardX, cardY);
+                tableCard = new ManaCoin(this.scene, cardX, cardY);
                 this.scene.add.existing(tableCard)
                 this.addExisting(tableCard);
             }

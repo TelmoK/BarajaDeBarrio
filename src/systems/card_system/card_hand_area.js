@@ -1,4 +1,4 @@
-import { TableElementArea } from "./card_container_area.js";
+import { TableElementArea } from "./table_element_area.js";
 import { PlayableCard } from "./playable_card.js";
 
 export class CardHandArea extends TableElementArea
