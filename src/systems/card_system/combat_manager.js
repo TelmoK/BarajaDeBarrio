@@ -1,4 +1,11 @@
 import { TableCharacterCard } from "./table_character_card.js";
+import { TableElementArea } from "./table_element_area.js";
+
+import { NodeAnimation } from "../animation_system/node_animation.js";
+import { ParallelAnimNode } from "../animation_system/parallel_anim_node.js";
+import { ActionAnimNode } from "../animation_system/action_anim_node.js";
+import { TweenAnimNode } from "../animation_system/tween_anim_node.js";
+import { DelayAnimNode } from "../animation_system/delay_anim_node.js";
 
 export class CombatManager
 {
@@ -18,7 +25,13 @@ export class CombatManager
      */
     _defenseRelationPairs;
     
-    constructor(scene)
+    /**
+     * 
+     * @param {Phaser.Scene} scene 
+     * @param {TableElementArea} playerActionCardArea 
+     * @param {TableElementArea} rivalActionCardArea 
+     */
+    constructor(scene, playerActionCardArea, rivalActionCardArea)
     {
         console.assert(scene instanceof Phaser.Scene, "Error: scene must be instance of Phaser.Scene");
 
@@ -46,10 +59,50 @@ export class CombatManager
             this._currentCombatTargetLine.setAlpha(0);
         }, 
         this);
+
+        this.scene.input.on(Phaser.Input.Events.DROP, function(pointer, gameObject, target) {
+            if(!(gameObject instanceof TableCharacterCard))
+                return;
+
+            if(target instanceof TableCharacterCard && target !== gameObject && !playerActionCardArea.conatinsElem(target))
+            {
+                const originX = gameObject.x;
+                const originY = gameObject.y;
+                
+                let delay = new DelayAnimNode(0.2);
+                let cardGoToEnemy = new TweenAnimNode(this.scene);
+                cardGoToEnemy.tween({
+                    targets: gameObject,
+                    x: { from: originX, to: target.x }, 
+                    y: { from: originY, to: target.y }, 
+                    duration: 100,
+                    yoyo: true,
+                    callbackScope: this
+                });
+                /*let cardComeBAck = new TweenAnimNode();
+                cardComeBAck.tween({
+                    target: gameObject,
+                    x: originX,
+                    y: originX,
+                    duration: 1000,
+                    callbackScope: this
+                });*/
+
+                this.cardAttackAnim = new NodeAnimation();
+                this.cardAttackAnim.pushBackAnimNode(delay);
+                this.cardAttackAnim.pushBackAnimNode(cardGoToEnemy);
+                //this.cardAttackAnim.pushBackAnimNode(cardComeBAck);
+                this.cardAttackAnim.play();
+
+                console.log("ATTACK");
+            }
+        }, 
+        this);
     }
 
     update(dt)
     {
-
+        if(this.cardAttackAnim)
+            this.cardAttackAnim.update(dt);
     }
 }

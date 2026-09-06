@@ -147,16 +147,33 @@ export class CardManager
     }
 
     /**
-     * Instaces a card in the scene at the given position including it in the internal list of cards in the scene
+     * Instaces a `PlayableCard` in the scene at the given position including it in the internal list of cards in the scene
      * @param {number} x
      * @param {number} y
      */
-    instanceCard(x, y)
+    instancePlayableCard(x, y)
     {
         console.assert(typeof x === "number", "Error: x must be a number");
         console.assert(typeof y === "number", "Error: y must be a number");
 
         let card = new PlayableCard(this.scene, x, y);
+        this.scene.add.existing(card);
+        this.cards.push(card);
+        
+        return card;
+    }
+
+    /**
+     * Instaces a `TableCharacterCard` in the scene at the given position including it in the internal list of cards in the scene
+     * @param {number} x
+     * @param {number} y
+     */
+    instanceTableCharacterCard(x, y)
+    {
+        console.assert(typeof x === "number", "Error: x must be a number");
+        console.assert(typeof y === "number", "Error: y must be a number");
+        
+        let card = new TableCharacterCard(this.scene, x, y);
         this.scene.add.existing(card);
         this.cards.push(card);
         

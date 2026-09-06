@@ -31,7 +31,7 @@ export class TableCharacterCard extends Card
         // To use the width and height properties
         this.setSize(this.getBounds().width, this.getBounds().height);
 
-        this.setInteractive({ draggable: true });
+        this.setInteractive({ draggable: true, dropZone: true });
 
         this.setScale(0.7, 0.7);
     }

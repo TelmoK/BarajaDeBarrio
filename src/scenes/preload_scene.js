@@ -42,9 +42,6 @@ export default class PreloadScene extends Phaser.Scene {
     create(data) {
        /* this.scene.start(KEYS_SCENES.MAIN_MENU);
         this.scene.stop();*/
-        
-        this.combatManager = new CombatManager(this);
-        this.add.existing(this.combatManager);
 
         // ---
 
@@ -83,6 +80,9 @@ export default class PreloadScene extends Phaser.Scene {
         this.actionCardArea = new TableElementArea(this, 640, 370);
         this.add.existing(this.actionCardArea);
 
+        this.rivalActionCardArea = new TableElementArea(this, 640, 200);
+        this.add.existing(this.rivalActionCardArea);
+
         // ---
 
         this.cardHand = new CardHandArea(this, 640, 670);
@@ -92,10 +92,10 @@ export default class PreloadScene extends Phaser.Scene {
         this.cardManager = new CardManager(this, this.cardHand, this.manaCoinWidget, this.actionCardArea);
         this.add.existing(this.cardManager);
 
-        let card = this.cardManager.instanceCard(0, 0);
-        let card2 = this.cardManager.instanceCard(300, 0);
-        let card3 = this.cardManager.instanceCard(600, 0);
-        let card4 = this.cardManager.instanceCard(700, 0);
+        let card = this.cardManager.instancePlayableCard(0, 0);
+        let card2 = this.cardManager.instancePlayableCard(300, 0);
+        let card3 = this.cardManager.instancePlayableCard(600, 0);
+        let card4 = this.cardManager.instancePlayableCard(700, 0);
 
         card.cardInfo = manaCardInfo;
         card2.cardInfo = manaCardInfo;
@@ -107,6 +107,15 @@ export default class PreloadScene extends Phaser.Scene {
         this.cardHand.includeCard(card3);
         this.cardHand.includeCard(card4);
 
+        // ---
+        
+        this.combatManager = new CombatManager(this, this.actionCardArea, this.rivalActionCardArea);
+        this.add.existing(this.combatManager);
+
+        this.rivalActionCardArea.includeElem(this.cardManager.instanceTableCharacterCard(0, 0));
+        this.rivalActionCardArea.includeElem(this.cardManager.instanceTableCharacterCard(0, 0));
+        this.rivalActionCardArea.includeElem(this.cardManager.instanceTableCharacterCard(0, 0));
+
     }
 
     update(t, dt_ms) 
@@ -116,6 +125,8 @@ export default class PreloadScene extends Phaser.Scene {
         this.cardHand.update(dt);
         this.actionCardArea.update(dt);
         this.manaCoinWidget.update(dt);
+
+        this.rivalActionCardArea.update(dt);
 
         this.cardManager.update(dt);
         this.combatManager.update(dt);
